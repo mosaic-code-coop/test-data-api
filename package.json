@@ -12,7 +12,13 @@
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
     "generate-report": "node scripts/generate-diversity-report.js",
-    "fact-check": "node scripts/fact-check-bios.js"
+    "fact-check": "node scripts/fact-check-bios.js",
+    "fetch-references": "npx tsx scripts/fetch-references.ts",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "release:patch": "npm run changelog && git add CHANGELOG.md && git commit -m \"chore: update changelog\" && npm version patch && git push --follow-tags && npm run build && npm publish",
+    "release:minor": "npm run changelog && git add CHANGELOG.md && git commit -m \"chore: update changelog\" && npm version minor && git push --follow-tags && npm run build && npm publish",
+    "release:major": "npm run changelog && git add CHANGELOG.md && git commit -m \"chore: update changelog\" && npm version major && git push --follow-tags && npm run build && npm publish",
+    "release:dry": "npm run changelog -- --dry-run"
   },
   "keywords": [
     "test",
@@ -27,13 +33,16 @@
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "conventional-changelog-cli": "^5.0.0",
     "eslint": "^8.0.0",
     "node-fetch": "^3.3.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0",
     "vitest": "^1.0.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "scripts"
   ],
   "exports": {
     ".": {
