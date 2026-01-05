@@ -1,2 +1,6 @@
 node_modules
 .env
+dist
+*.log
+src/*.js
+src/*.d.ts
