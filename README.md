@@ -101,6 +101,11 @@ interface DataPackage {
   people: Person[];
   groups: Group[];
   events: Event[];
+  metadata?: DataPackageMetadata;
+}
+
+interface DataPackageMetadata {
+  containsFirstNationsPeople: boolean;
 }
 
 interface Person {
@@ -146,6 +151,20 @@ The library automatically makes certain fields nullable based on realistic perce
 - `picture`: 50% null
 
 This helps test scenarios where users haven't filled out all profile information.
+
+## Metadata
+
+The `metadata` field is optional by default, but is **required** when your dataset contains First Nations, Indigenous, or Aboriginal people. This ensures proper cultural protocols are followed.
+
+When `containsFirstNationsPeople` is true:
+- The `DataFactory` requires explicit acknowledgment via `acknowledgeDeceasedFirstNations: true`
+- Validation will check that people marked with `isFirstNations: true` have appropriate cultural markers in their tags or bio
+
+```typescript
+const factory = new DataFactory(dataPackage, {
+  acknowledgeDeceasedFirstNations: true  // Required for First Nations datasets
+});
+```
 
 ## Performance
 
