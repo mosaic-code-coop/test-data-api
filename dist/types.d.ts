@@ -23,6 +23,7 @@ export interface Person {
     reference?: string;
     address?: Address;
     quote?: string;
+    quoteReference?: string;
     isFirstNations?: boolean;
 }
 export interface Group {
@@ -39,6 +40,7 @@ export interface Event {
     name: string;
     date: Date;
     attendeeIds: string[];
+    reference?: string;
 }
 export interface DataPackageMetadata {
     containsFirstNationsPeople: boolean;
