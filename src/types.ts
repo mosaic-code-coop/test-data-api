@@ -20,7 +20,7 @@ export interface Person {
   phone: string | null;
   picture: string | null;
   tags: string[];
-  groupMemberships: string[];
+  groupMemberships?: string[];
   reference?: string;
   address?: Address;
   quote?: string;

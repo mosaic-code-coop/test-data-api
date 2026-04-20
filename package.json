@@ -1,6 +1,6 @@
 {
   "name": "test-data-factory",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A deterministic test data API that accepts data packages and provides fast retrieval methods",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,10 @@
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest --watch",
-    "lint": "eslint src --ext .ts",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "generate-report": "node scripts/generate-diversity-report.js",
     "fact-check": "node scripts/fact-check-bios.js",
@@ -29,21 +32,33 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mosaic-sunrise/test-data-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mosaic-sunrise/test-data-api/issues"
+  },
+  "homepage": "https://github.com/mosaic-sunrise/test-data-api#readme",
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
     "conventional-changelog-cli": "^5.0.0",
-    "eslint": "^8.0.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
     "node-fetch": "^3.3.2",
+    "prettier": "^3.8.3",
     "tsx": "^4.21.0",
     "typescript": "^5.0.0",
+    "typescript-eslint": "^8.58.2",
     "vitest": "^1.0.0"
   },
   "files": [
     "dist",
     "scripts"
   ],
+  "bin": {
+    "fetch-test-references": "scripts/fetch-test-references"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",

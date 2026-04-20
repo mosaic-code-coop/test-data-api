@@ -1,9 +1,11 @@
 # Biographical Fact-Checking Script
 
 ## Overview
+
 This script automatically fact-checks biographical data in test datasets against their reference sources using either HuggingFace API (recommended) or local AI models via Ollama.
 
 ## Features
+
 - ✅ **HuggingFace Integration**: Fast cloud-based fact-checking with `meta-llama/Llama-3.1-8B-Instruct`
 - 🔧 **Ollama Support**: Local processing with `bespoke-minicheck:7b` for offline usage
 - 📊 Processes both datasets sequentially with natural rate limiting
@@ -20,6 +22,7 @@ This script automatically fact-checks biographical data in test datasets against
    - Create a new token with "Read" permission
 
 2. **Set up environment**:
+
    ```bash
    echo "HUGGING_FACE_API_KEY=your_key_here" > .env
    ```
@@ -32,12 +35,14 @@ This script automatically fact-checks biographical data in test datasets against
 ### Option 2: Local Ollama (Slower but offline)
 
 1. **Install Ollama**:
+
    ```bash
    # Visit https://ollama.com/download or:
    curl -fsSL https://ollama.ai/install.sh | sh
    ```
 
 2. **Download the fact-checking model**:
+
    ```bash
    ollama pull bespoke-minicheck:7b
    ```
@@ -68,16 +73,19 @@ node scripts/fact-check-bios.js --local <dataset-path> [dataset-name]
 ### Examples
 
 Check a single dataset with HuggingFace:
+
 ```bash
 node scripts/fact-check-bios.js ../stem-achievements-data/dist/index.js stem-achievements
 ```
 
 Check multiple datasets:
+
 ```bash
 node scripts/fact-check-bios.js ../first-nations-activists-data/dist/index.js first-nations-activists ../stem-achievements-data/dist/index.js stem-achievements
 ```
 
 Force local Ollama usage:
+
 ```bash
 node scripts/fact-check-bios.js --local ../stem-achievements-data/dist/index.js
 ```
@@ -92,6 +100,7 @@ node scripts/fact-checker.test.js
 ```
 
 The test suite includes:
+
 1. **Absurdly False Claims**: Moon landing, eating children, impossible achievements
 2. **Wrong Dates**: Incorrect birth/death dates and chronology
 3. **Impossible Achievements**: Anachronistic awards and achievements
@@ -100,16 +109,16 @@ The test suite includes:
 
 The script generates `scripts/fact-check-errors.csv` with these columns:
 
-| Column | Description |
-|--------|-------------|
-| `dataset` | "first-nations-activists" or "stem-achievements" |
-| `person_id` | Person's ID from dataset |
-| `person_name` | Full name for identification |
-| `error_type` | "factual_error", "url_unreachable", "content_unreadable" |
-| `description` | Specific issue found |
-| `confidence` | "high", "medium", "low" (LLM confidence) |
-| `reference_url` | The reference URL checked |
-| `bio_excerpt` | Relevant portion of bio with issue |
+| Column          | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| `dataset`       | "first-nations-activists" or "stem-achievements"         |
+| `person_id`     | Person's ID from dataset                                 |
+| `person_name`   | Full name for identification                             |
+| `error_type`    | "factual_error", "url_unreachable", "content_unreadable" |
+| `description`   | Specific issue found                                     |
+| `confidence`    | "high", "medium", "low" (LLM confidence)                 |
+| `reference_url` | The reference URL checked                                |
+| `bio_excerpt`   | Relevant portion of bio with issue                       |
 
 ## Error Types
 
@@ -120,10 +129,12 @@ The script generates `scripts/fact-check-errors.csv` with these columns:
 ## Configuration
 
 ### API Provider Selection
+
 - **Automatic**: Uses HuggingFace if `HUGGING_FACE_API_KEY` is set, otherwise Ollama
 - **Manual**: Use `--huggingface` or `--local` flags to override
 
 ### Model Configuration
+
 Edit `scripts/fact-check-bios.js` to change models:
 
 ```javascript
@@ -135,6 +146,7 @@ const OLLAMA_MODEL = 'bespoke-minicheck:7b';
 ```
 
 ### Alternative Local Models
+
 If using Ollama, you can try different models:
 
 ```bash
@@ -161,34 +173,43 @@ ollama pull reflection:70b
 ## Troubleshooting
 
 ### HuggingFace Issues
-**"HUGGINGFACE_API_KEY not found"**: 
+
+**"HUGGINGFACE_API_KEY not found"**:
+
 - Add your API key to `.env` file
 - Get a key from https://huggingface.co/settings/tokens
 
 **"No Inference Provider available"**:
+
 - Some models may not be available - the script uses `meta-llama/Llama-3.1-8B-Instruct` which is tested and working
 
 ### Ollama Issues
-**"Cannot connect to Ollama"**: 
+
+**"Cannot connect to Ollama"**:
+
 - Ensure Ollama is running: `ollama serve`
 - Check model is available: `ollama list`
 
 **"Model not found"**:
+
 - Pull the model: `ollama pull bespoke-minicheck:7b`
 
 ### General Issues
+
 **Too many errors**:
+
 - Try running the test suite first: `node scripts/fact-checker.test.js`
 - Check if reference URLs are valid
 - Consider using HuggingFace for better accuracy
 
 **Script crashes**:
+
 - Check the error message for missing dependencies
 - Run `npm install` to ensure all packages are installed
 
 ## Performance Comparison
 
-| Provider | Speed per person | Cost | Offline | Setup Complexity |
-|----------|------------------|------|---------|------------------|
-| HuggingFace | ~2-3 seconds | Free tier | ❌ | Low |
-| Local Ollama | ~30-60 seconds | Free | ✅ | Medium |
+| Provider     | Speed per person | Cost      | Offline | Setup Complexity |
+| ------------ | ---------------- | --------- | ------- | ---------------- |
+| HuggingFace  | ~2-3 seconds     | Free tier | ❌      | Low              |
+| Local Ollama | ~30-60 seconds   | Free      | ✅      | Medium           |

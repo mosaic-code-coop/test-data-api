@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+npx tsx "$SCRIPT_DIR/fetch-references.ts" "$@"

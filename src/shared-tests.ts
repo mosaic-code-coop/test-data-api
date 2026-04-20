@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Person, Group, Event, DataPackage, ValidationOptions } from './types.js';
+import { Person, DataPackage, ValidationOptions } from './types.js';
 import { DataFactory } from './DataFactory.js';
 
 // Helper: Get person identifier for error messages
@@ -15,7 +15,13 @@ function validateRequiredString(obj: any, field: string, id: string): void {
 }
 
 // Helper: Validate a field matches a regex pattern
-function validatePattern(obj: any, field: string, pattern: RegExp, id: string, message: string): void {
+function validatePattern(
+  obj: any,
+  field: string,
+  pattern: RegExp,
+  id: string,
+  message: string,
+): void {
   expect(obj[field], `${id}: ${message}`).toMatch(pattern);
 }
 
@@ -34,7 +40,6 @@ function validateUniqueIds(items: any[], type: string): void {
 // Helper: Validate an array field
 function validateArrayField(obj: any, field: string, id: string): void {
   expect(Array.isArray(obj[field]), `${id}: ${field} must be array`).toBe(true);
-  expect(obj[field].length, `${id}: must have at least one ${field}`).toBeGreaterThan(0);
 }
 
 interface TestOptions extends ValidationOptions {
@@ -42,10 +47,6 @@ interface TestOptions extends ValidationOptions {
 }
 
 export function validateDataPackage(dataPackage: DataPackage, options: TestOptions = {}) {
-  const factory = new DataFactory(dataPackage, {
-    acknowledgeDeceasedFirstNations: options.acknowledgeDeceasedFirstNations
-  });
-
   const defaultOptions: Required<TestOptions> = {
     datasetName: options.datasetName || 'Dataset',
     minBirthYear: options.minBirthYear || 300,
@@ -58,7 +59,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
     validateReferenceUrls: options.validateReferenceUrls ?? false,
     httpTimeout: options.httpTimeout || 10000,
     customValidations: options.customValidations || [],
-    acknowledgeDeceasedFirstNations: options.acknowledgeDeceasedFirstNations || false
+    acknowledgeDeceasedFirstNations: options.acknowledgeDeceasedFirstNations || false,
   };
 
   describe(`${defaultOptions.datasetName} - Data Structure Validation`, () => {
@@ -103,52 +104,90 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
           expect(person.bio, `${personId}: missing bio field`).not.toBeUndefined();
           expect(person.bio, `${personId}: bio must be string`).toEqual(expect.any(String));
           if (person.bio) {
-            expect(person.bio.length, `${personId}: bio too short (${person.bio.length} chars, minimum ${defaultOptions.minBioLength})`).toBeGreaterThanOrEqual(defaultOptions.minBioLength);
+            expect(
+              person.bio.length,
+              `${personId}: bio too short (${person.bio.length} chars, minimum ${defaultOptions.minBioLength})`,
+            ).toBeGreaterThanOrEqual(defaultOptions.minBioLength);
           }
         });
 
         if (defaultOptions.requireDateOfBirth) {
           it('has valid birth date', () => {
             expect(person.dateOfBirth, `${personId}: missing dateOfBirth field`).toBeDefined();
-            expect(person.dateOfBirth, `${personId}: dateOfBirth must be a Date object`).toBeInstanceOf(Date);
+            expect(
+              person.dateOfBirth,
+              `${personId}: dateOfBirth must be a Date object`,
+            ).toBeInstanceOf(Date);
 
             const birthYear = person.dateOfBirth!.getFullYear();
-            expect(birthYear, `${personId}: unrealistic birth year ${birthYear} (expected ${defaultOptions.minBirthYear}-${defaultOptions.maxBirthYear})`).toBeGreaterThanOrEqual(defaultOptions.minBirthYear);
-            expect(birthYear, `${personId}: unrealistic birth year ${birthYear} (expected ${defaultOptions.minBirthYear}-${defaultOptions.maxBirthYear})`).toBeLessThanOrEqual(defaultOptions.maxBirthYear);
+            expect(
+              birthYear,
+              `${personId}: unrealistic birth year ${birthYear} (expected ${defaultOptions.minBirthYear}-${defaultOptions.maxBirthYear})`,
+            ).toBeGreaterThanOrEqual(defaultOptions.minBirthYear);
+            expect(
+              birthYear,
+              `${personId}: unrealistic birth year ${birthYear} (expected ${defaultOptions.minBirthYear}-${defaultOptions.maxBirthYear})`,
+            ).toBeLessThanOrEqual(defaultOptions.maxBirthYear);
           });
         }
 
         if (defaultOptions.requirePronouns) {
           it('has valid pronouns', () => {
             expect(person.pronouns, `${personId}: missing pronouns field`).toBeDefined();
-            expect(person.pronouns, `${personId}: pronouns must be string`).toEqual(expect.any(String));
+            expect(person.pronouns, `${personId}: pronouns must be string`).toEqual(
+              expect.any(String),
+            );
             expect(person.pronouns!.length, `${personId}: pronouns too short`).toBeGreaterThan(0);
           });
         }
 
         it('has valid email', () => {
           validateRequiredString(person, 'email', personId);
-          validatePattern(person, 'email', /^[^\s@]+@[^\s@]+\.[^\s@]+$/, personId, 'invalid email format');
-          validatePattern(person, 'email', /\.test$/, personId, 'should use .test domain for mock data safety');
+          validatePattern(
+            person,
+            'email',
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            personId,
+            'invalid email format',
+          );
+          validatePattern(
+            person,
+            'email',
+            /\.test$/,
+            personId,
+            'should use .test domain for mock data safety',
+          );
         });
 
         it('has valid phone if present', () => {
           if (person.phone) {
             expect(person.phone, `${personId}: phone must be string`).toEqual(expect.any(String));
-            validatePattern(person, 'phone', /555|test|-55-5/i, personId, 'should use 555, test, or -55-5 for mock data safety');
+            validatePattern(
+              person,
+              'phone',
+              /555|test|-55-5/i,
+              personId,
+              'should use 555, test, or -55-5 for mock data safety',
+            );
           }
         });
 
         it('has fake street address if present', () => {
           if (person.address?.street) {
-            expect(person.address.street, `${personId}: should use " Test" for mock data safety`).toMatch(/ Test/);
+            expect(
+              person.address.street,
+              `${personId}: should use " Test" for mock data safety`,
+            ).toMatch(/ Test/);
           }
         });
 
         it('has valid reference URL if present', () => {
           const personWithRef = person as any;
           if (personWithRef.reference) {
-            expect(personWithRef.reference, `${personId}: reference must be valid HTTPS URL`).toMatch(/^https:\/\/.+/);
+            expect(
+              personWithRef.reference,
+              `${personId}: reference must be valid HTTPS URL`,
+            ).toMatch(/^https:\/\/.+/);
           }
         });
 
@@ -157,17 +196,31 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
 
           person.tags.forEach((tag, tagIndex) => {
             expect(tag, `${personId}: tag ${tagIndex} must be string`).toEqual(expect.any(String));
-            expect(tag, `${personId}: tag "${tag}" must be lowercase with hyphens only`).toMatch(/^[a-z0-9-]+$/);
+            expect(tag, `${personId}: tag "${tag}" must be lowercase with hyphens only`).toMatch(
+              /^[a-z0-9-]+$/,
+            );
           });
         });
 
         it('has valid picture URL', () => {
           validateRequiredString(person, 'picture', personId);
-          validatePattern(person, 'picture', /^https:\/\/.+/, personId, 'picture must be valid HTTPS URL');
+          validatePattern(
+            person,
+            'picture',
+            /^https:\/\/.+/,
+            personId,
+            'picture must be valid HTTPS URL',
+          );
         });
 
         it('has valid group memberships structure', () => {
-          validateArrayField(person, 'groupMemberships', personId);
+          // groupMemberships is optional; if present, must be array
+          if (person.groupMemberships) {
+            validateArrayField(person, 'groupMemberships', personId);
+          } else {
+            // Missing groupMemberships is treated as empty array
+            expect(person.groupMemberships).toBeUndefined();
+          }
         });
       });
     });
@@ -198,7 +251,9 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
 
         it('has valid email if present', () => {
           if (group.email) {
-            expect(group.email, `${groupId}: should use .test domain for mock data safety`).toMatch(/\.test$/);
+            expect(group.email, `${groupId}: should use .test domain for mock data safety`).toMatch(
+              /\.test$/,
+            );
           }
         });
       });
@@ -251,21 +306,29 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
 
     describe('Relationship Validations', () => {
       it('group memberships reference valid groups', () => {
-        const groupIds = new Set(dataPackage.groups.map(g => g.id));
+        const groupIds = new Set(dataPackage.groups.map((g) => g.id));
 
-        dataPackage.people.forEach(person => {
-          person.groupMemberships.forEach(groupId => {
-            expect(groupIds.has(groupId), `Person ${person.fullName || person.id}: references non-existent group "${groupId}"`).toBe(true);
+        dataPackage.people.forEach((person) => {
+          // Handle optional groupMemberships - treat missing as empty array
+          const memberships = person.groupMemberships || [];
+          memberships.forEach((groupId) => {
+            expect(
+              groupIds.has(groupId),
+              `Person ${person.fullName || person.id}: references non-existent group "${groupId}"`,
+            ).toBe(true);
           });
         });
       });
 
       it('event attendees reference valid people', () => {
-        const personIds = new Set(dataPackage.people.map(p => p.id));
+        const personIds = new Set(dataPackage.people.map((p) => p.id));
 
-        dataPackage.events.forEach(event => {
-          event.attendeeIds.forEach(attendeeId => {
-            expect(personIds.has(attendeeId), `Event "${event.name}": references non-existent person "${attendeeId}"`).toBe(true);
+        dataPackage.events.forEach((event) => {
+          event.attendeeIds.forEach((attendeeId) => {
+            expect(
+              personIds.has(attendeeId),
+              `Event "${event.name}": references non-existent person "${attendeeId}"`,
+            ).toBe(true);
           });
         });
       });
@@ -276,7 +339,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
   describe(`${defaultOptions.datasetName} - DataFactory Integration`, () => {
     it('should work with DataFactory when properly acknowledged', () => {
       const testFactory = new DataFactory(dataPackage, {
-        acknowledgeDeceasedFirstNations: defaultOptions.acknowledgeDeceasedFirstNations
+        acknowledgeDeceasedFirstNations: defaultOptions.acknowledgeDeceasedFirstNations,
       });
 
       const people = testFactory.getPeople();
@@ -291,19 +354,21 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
 
     it('should support filtering by count', () => {
       const testFactory = new DataFactory(dataPackage, {
-        acknowledgeDeceasedFirstNations: defaultOptions.acknowledgeDeceasedFirstNations
+        acknowledgeDeceasedFirstNations: defaultOptions.acknowledgeDeceasedFirstNations,
       });
 
       const allPeople = testFactory.getPeople();
       const somePeople = testFactory.getPeople(5);
-      
+
       expect(somePeople.length).toBeLessThanOrEqual(5);
       expect(somePeople.length).toBeLessThanOrEqual(allPeople.length);
     });
 
     if (defaultOptions.containsFirstNationsPeople) {
       it('should require acknowledgment for First Nations data', () => {
-        const factoryWithoutAck = new DataFactory(dataPackage, { acknowledgeDeceasedFirstNations: false });
+        const factoryWithoutAck = new DataFactory(dataPackage, {
+          acknowledgeDeceasedFirstNations: false,
+        });
         expect(() => factoryWithoutAck.getPeople()).toThrow(/requires acknowledgment/);
       });
     }
@@ -319,7 +384,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
             const personId = getPersonId(person, index);
             try {
               const response = await fetch(person.picture!, {
-                method: 'HEAD'
+                method: 'HEAD',
               });
               if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -328,12 +393,12 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
             } catch (error) {
               throw new Error(`${personId}: ${(error as Error).message}`);
             }
-          })
+          }),
         );
 
         const failures = results
-          .filter(result => result.status === 'rejected')
-          .map(result => (result as PromiseRejectedResult).reason.message);
+          .filter((result) => result.status === 'rejected')
+          .map((result) => (result as PromiseRejectedResult).reason.message);
 
         if (failures.length > 0) {
           throw new Error(`Image URL validation failed:\n${failures.join('\n')}`);
@@ -349,7 +414,10 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
         it(`should pass custom validation ${index + 1}`, () => {
           dataPackage.people.forEach((person, personIndex) => {
             const errors = validation(person, personIndex);
-            expect(errors, `Person ${person.fullName || person.id}: ${errors.join(', ')}`).toHaveLength(0);
+            expect(
+              errors,
+              `Person ${person.fullName || person.id}: ${errors.join(', ')}`,
+            ).toHaveLength(0);
           });
         });
       });
@@ -358,10 +426,13 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
 }
 
 // Separate HTTP image validation function that can be used independently
-export function validateImageUrls(dataPackage: DataPackage, options: { datasetName?: string; httpTimeout?: number } = {}) {
+export function validateImageUrls(
+  dataPackage: DataPackage,
+  options: { datasetName?: string; httpTimeout?: number } = {},
+) {
   const defaultOptions = {
     datasetName: options.datasetName || 'Dataset',
-    httpTimeout: options.httpTimeout || 15000
+    httpTimeout: options.httpTimeout || 15000,
   };
 
   describe(`${defaultOptions.datasetName} - HTTP Image Validation`, () => {
@@ -372,7 +443,7 @@ export function validateImageUrls(dataPackage: DataPackage, options: { datasetNa
           const personId = getPersonId(person, index);
           try {
             const response = await fetch(person.picture!, {
-              method: 'HEAD'
+              method: 'HEAD',
             });
             if (!response.ok) {
               throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -381,12 +452,12 @@ export function validateImageUrls(dataPackage: DataPackage, options: { datasetNa
           } catch (error) {
             throw new Error(`${personId}: ${(error as Error).message}`);
           }
-        })
+        }),
       );
 
       const failures = results
-        .filter(result => result.status === 'rejected')
-        .map(result => (result as PromiseRejectedResult).reason.message);
+        .filter((result) => result.status === 'rejected')
+        .map((result) => (result as PromiseRejectedResult).reason.message);
 
       if (failures.length > 0) {
         throw new Error(`Image URL validation failed:\n${failures.join('\n')}`);

@@ -9,7 +9,7 @@ describe('Image Validation Example', () => {
   validateImageUrls(firstNationsActivistsData, {
     datasetName: 'First Nations Activists',
     httpTimeout: 15000, // 15 second timeout
-    skipImageValidation: false // Set to true to skip validation
+    skipImageValidation: false, // Set to true to skip validation
   });
 });
 

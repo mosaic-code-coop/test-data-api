@@ -79,7 +79,7 @@ import { validateImageUrls } from 'test-data-factory';
 validateImageUrls(yourDataPackage, {
   datasetName: 'Your Dataset',
   httpTimeout: 15000, // 15 second timeout
-  skipImageValidation: false
+  skipImageValidation: false,
 });
 
 // Skip image validation (useful for CI/CD)
@@ -87,6 +87,7 @@ validateImageUrls(yourDataPackage, { skipImageValidation: true });
 ```
 
 **Note:** Image validation is separate from the main validation suite because it:
+
 - Makes HTTP requests (slower)
 - Consumes bandwidth
 - May timeout on slow connections
@@ -141,11 +142,13 @@ interface Event {
 The library automatically makes certain fields nullable based on realistic percentages:
 
 **Person:**
+
 - `bio`: 20% null
-- `phone`: 65% null  
+- `phone`: 65% null
 - `picture`: 25% null
 
 **Group:**
+
 - `email`: 30% null
 - `website`: 40% null
 - `picture`: 50% null
@@ -157,12 +160,13 @@ This helps test scenarios where users haven't filled out all profile information
 The `metadata` field is optional by default, but is **required** when your dataset contains First Nations, Indigenous, or Aboriginal people. This ensures proper cultural protocols are followed.
 
 When `containsFirstNationsPeople` is true:
+
 - The `DataFactory` requires explicit acknowledgment via `acknowledgeDeceasedFirstNations: true`
 - Validation will check that people marked with `isFirstNations: true` have appropriate cultural markers in their tags or bio
 
 ```typescript
 const factory = new DataFactory(dataPackage, {
-  acknowledgeDeceasedFirstNations: true  // Required for First Nations datasets
+  acknowledgeDeceasedFirstNations: true, // Required for First Nations datasets
 });
 ```
 
@@ -182,13 +186,13 @@ import myDataPackage from './my-data-package';
 
 describe('User Service', () => {
   const factory = new DataFactory(myDataPackage);
-  
+
   it('should handle user creation', () => {
     factory.setSeed(42); // Deterministic test data
     const testUser = factory.getPeople(1)[0];
-    
+
     const result = userService.createUser(testUser);
-    
+
     expect(result.email).toBe(testUser.email);
   });
 });

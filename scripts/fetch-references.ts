@@ -131,7 +131,9 @@ async function fetchAndSaveReference(url: string, outputFile: string): Promise<b
 /**
  * Process a single person
  */
-async function processPerson(person: Person): Promise<{ reference: boolean; quoteReference: boolean }> {
+async function processPerson(
+  person: Person,
+): Promise<{ reference: boolean; quoteReference: boolean }> {
   const personId = person.id;
   const personName = person.fullName || person.englishName || person.preferredName || personId;
   const referenceUrl = person.reference;
@@ -206,9 +208,7 @@ async function loadDataset(datasetPath: string): Promise<DataPackage> {
   debugLog(`Loading dataset from: ${absolutePath}`);
 
   // Import the dataset - handle both TS and JS files
-  const importPath = absolutePath.endsWith('.ts')
-    ? absolutePath
-    : absolutePath;
+  const importPath = absolutePath.endsWith('.ts') ? absolutePath : absolutePath;
 
   // Dynamic import
   const dataPackage = await import(importPath);
@@ -265,7 +265,7 @@ async function run(): Promise<void> {
 
       // Small delay between requests
       if (i < people.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
   }
@@ -291,7 +291,7 @@ async function run(): Promise<void> {
 
       // Small delay between requests
       if (i < groups.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
   }
@@ -317,7 +317,7 @@ async function run(): Promise<void> {
 
       // Small delay between requests
       if (i < events.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
     }
   }
@@ -362,7 +362,7 @@ interface DataPackage {
 }
 
 // Run the script
-run().catch(error => {
+run().catch((error) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });
