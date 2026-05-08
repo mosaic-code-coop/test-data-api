@@ -8,155 +8,62 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Geography mapping based on various data patterns
+// Maps a nationality tag to a country name. Add a new tag here when a new
+// nationality appears in a dataset; mapCountryToRegion below assigns it to a
+// region. The mapping is intentionally explicit so country detection is
+// auditable and doesn't drift on bio wording.
+const TAG_TO_COUNTRY = {
+  // North America
+  american: 'United States',
+  nasa: 'United States',
+  'african-american': 'United States',
+  'asian-american': 'United States',
+  'indian-american': 'United States',
+  'chinese-american': 'United States',
+  // Europe
+  british: 'United Kingdom',
+  'german-born': 'United Kingdom',
+  french: 'France',
+  'polish-french': 'France',
+  german: 'Germany',
+  italian: 'Italy',
+  polish: 'Poland',
+  russian: 'Russia',
+  soviet: 'Russia',
+  austrian: 'Austria',
+  'austrian-swedish': 'Austria',
+  greek: 'Greece',
+  danish: 'Denmark',
+  // Asia
+  chinese: 'China',
+  indian: 'India',
+  indonesian: 'Indonesia',
+  japanese: 'Japan',
+  korean: 'South Korea',
+  iranian: 'Iran',
+  pakistani: 'Pakistan',
+  taiwanese: 'Taiwan',
+  // Africa
+  senegalese: 'Senegal',
+  kenyan: 'Kenya',
+  nigerian: 'Nigeria',
+  'south-african': 'South Africa',
+  egyptian: 'Egypt',
+  ghanaian: 'Ghana',
+  moroccan: 'Morocco',
+};
+
+// Geography detection: address.country is authoritative; otherwise a
+// nationality tag is matched against TAG_TO_COUNTRY. No bio/name heuristics —
+// add a tag instead of growing this function.
 const getGeographicInfo = (person) => {
-  const email = person.email || '';
-  const address = person.address;
-  const tags = person.tags || [];
-  const name = person.fullName || person.preferredName || person.englishName || '';
-  const bio = person.bio || '';
-
-  // Use address if available (most reliable)
-  if (address && address.country) {
-    const country = address.country;
-    return mapCountryToRegion(country);
+  if (person.address?.country) {
+    return mapCountryToRegion(person.address.country);
   }
-
-  // Geography mapping based on tags and biographical information (for STEM data)
-  if (
-    tags.includes('american') ||
-    tags.includes('nasa') ||
-    tags.includes('african-american') ||
-    tags.includes('asian-american') ||
-    tags.includes('indian-american') ||
-    bio.includes('NASA') ||
-    bio.includes('United States') ||
-    bio.includes('American')
-  ) {
-    return { region: 'North America', country: 'United States' };
+  for (const tag of person.tags || []) {
+    const country = TAG_TO_COUNTRY[tag];
+    if (country) return mapCountryToRegion(country);
   }
-
-  if (
-    tags.includes('british') ||
-    bio.includes('British') ||
-    bio.includes('Cambridge') ||
-    bio.includes('Oxford') ||
-    bio.includes('London')
-  ) {
-    return { region: 'Europe', country: 'United Kingdom' };
-  }
-
-  if (
-    tags.includes('chinese') ||
-    name.includes('吳') ||
-    name.includes('王') ||
-    person.preferredName?.includes('Wáng') ||
-    person.preferredName?.includes('Wú')
-  ) {
-    return { region: 'Asia', country: 'China' };
-  }
-
-  if (
-    tags.includes('russian') ||
-    name.includes('Софья') ||
-    name.includes('Васильевна') ||
-    tags.includes('soviet')
-  ) {
-    return { region: 'Europe', country: 'Russia' };
-  }
-
-  if (
-    tags.includes('french') ||
-    tags.includes('polish-french') ||
-    bio.includes('Sorbonne') ||
-    bio.includes('France') ||
-    bio.includes('French')
-  ) {
-    return { region: 'Europe', country: 'France' };
-  }
-
-  if (tags.includes('german') || bio.includes('German') || bio.includes('Germany')) {
-    return { region: 'Europe', country: 'Germany' };
-  }
-
-  if (tags.includes('italian') || bio.includes('Italian') || bio.includes('Italy')) {
-    return { region: 'Europe', country: 'Italy' };
-  }
-
-  if (tags.includes('polish') || name.includes('Skłodowska') || bio.includes('Polish')) {
-    return { region: 'Europe', country: 'Poland' };
-  }
-
-  if (tags.includes('austrian') || tags.includes('austrian-swedish') || bio.includes('Austrian')) {
-    return { region: 'Europe', country: 'Austria' };
-  }
-
-  if (tags.includes('greek') || name.includes('Hypatia') || bio.includes('Alexandria')) {
-    return { region: 'Europe', country: 'Greece' };
-  }
-
-  if (tags.includes('danish') || bio.includes('Danish') || bio.includes('Denmark')) {
-    return { region: 'Europe', country: 'Denmark' };
-  }
-
-  // Indian scientists
-  if (
-    name.includes('श्रीनिवास') ||
-    name.includes('चन्द्रशेखर') ||
-    person.englishName?.includes('Ramanujan') ||
-    person.englishName?.includes('Raman') ||
-    person.englishName?.includes('Kalam') ||
-    tags.includes('indian')
-  ) {
-    return { region: 'Asia', country: 'India' };
-  }
-
-  // Indonesian scientist
-  if (person.englishName?.includes('Hassan') && bio.includes('Indonesia')) {
-    return { region: 'Asia', country: 'Indonesia' };
-  }
-
-  // African scientists
-  if (person.englishName?.includes('Diop') && bio.includes('Senegal')) {
-    return { region: 'Africa', country: 'Senegal' };
-  }
-
-  if (person.englishName?.includes('Maathai') && bio.includes('Kenya')) {
-    return { region: 'Africa', country: 'Kenya' };
-  }
-
-  if (person.englishName?.includes('Lambo') && bio.includes('Nigeria')) {
-    return { region: 'Africa', country: 'Nigeria' };
-  }
-
-  if (person.englishName?.includes('Karim') && bio.includes('South Africa')) {
-    return { region: 'Africa', country: 'South Africa' };
-  }
-
-  // Fallback to email domain patterns
-  if (email.includes('.us') || email.includes('@example.com') || email.includes('@test.com')) {
-    return { region: 'North America', country: 'United States' };
-  }
-  if (email.includes('.uk') || email.includes('.co.uk')) {
-    return { region: 'Europe', country: 'United Kingdom' };
-  }
-  if (email.includes('.de')) {
-    return { region: 'Europe', country: 'Germany' };
-  }
-  if (email.includes('.fr')) {
-    return { region: 'Europe', country: 'France' };
-  }
-  if (email.includes('.cn')) {
-    return { region: 'Asia', country: 'China' };
-  }
-  if (email.includes('.in')) {
-    return { region: 'Asia', country: 'India' };
-  }
-  if (email.includes('.au')) {
-    return { region: 'Oceania', country: 'Australia' };
-  }
-
-  // Default fallback
   return { region: 'Not Specified', country: 'Not Specified' };
 };
 
@@ -194,6 +101,9 @@ const mapCountryToRegion = (country) => {
       'Singapore',
       'Indonesia',
       'Philippines',
+      'Iran',
+      'Pakistan',
+      'Taiwan',
     ].includes(country)
   ) {
     return { region: 'Asia', country };
