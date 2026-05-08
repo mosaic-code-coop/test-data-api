@@ -8,10 +8,80 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Maps a nationality tag to a country name. Add a new tag here when a new
-// nationality appears in a dataset; mapCountryToRegion below assigns it to a
-// region. The mapping is intentionally explicit so country detection is
-// auditable and doesn't drift on bio wording.
+// Country → region. Single source of truth: extend this map when a new
+// country appears in any dataset.
+const COUNTRY_TO_REGION = {
+  // North America
+  'United States': 'North America',
+  Canada: 'North America',
+  Mexico: 'North America',
+  Guatemala: 'North America',
+  Honduras: 'North America',
+  // South America
+  Brazil: 'South America',
+  Argentina: 'South America',
+  Chile: 'South America',
+  Colombia: 'South America',
+  Peru: 'South America',
+  Bolivia: 'South America',
+  Ecuador: 'South America',
+  // Europe
+  'United Kingdom': 'Europe',
+  Germany: 'Europe',
+  France: 'Europe',
+  Italy: 'Europe',
+  Spain: 'Europe',
+  Poland: 'Europe',
+  Russia: 'Europe',
+  Netherlands: 'Europe',
+  Sweden: 'Europe',
+  Norway: 'Europe',
+  Denmark: 'Europe',
+  Finland: 'Europe',
+  Austria: 'Europe',
+  Greece: 'Europe',
+  // Asia
+  China: 'Asia',
+  Japan: 'Asia',
+  India: 'Asia',
+  'South Korea': 'Asia',
+  Thailand: 'Asia',
+  Singapore: 'Asia',
+  Indonesia: 'Asia',
+  Philippines: 'Asia',
+  Iran: 'Asia',
+  Pakistan: 'Asia',
+  Taiwan: 'Asia',
+  Nepal: 'Asia',
+  // Africa
+  Nigeria: 'Africa',
+  'South Africa': 'Africa',
+  Kenya: 'Africa',
+  Egypt: 'Africa',
+  Ghana: 'Africa',
+  Morocco: 'Africa',
+  Senegal: 'Africa',
+  Tanzania: 'Africa',
+  Botswana: 'Africa',
+  Namibia: 'Africa',
+  Chad: 'Africa',
+  Gambia: 'Africa',
+  // Oceania
+  Australia: 'Oceania',
+  'New Zealand': 'Oceania',
+  Fiji: 'Oceania',
+  'Papua New Guinea': 'Oceania',
+  Vanuatu: 'Oceania',
+  'Solomon Islands': 'Oceania',
+  Kiribati: 'Oceania',
+  'Marshall Islands': 'Oceania',
+  Samoa: 'Oceania',
+};
+
+// Maps a nationality tag to a country name (which is then resolved to a
+// region via COUNTRY_TO_REGION). Add a new tag here when a new nationality
+// appears in a dataset. The mapping is intentionally explicit so country
+// detection is auditable and doesn't drift on bio wording.
 const TAG_TO_COUNTRY = {
   // North America
   american: 'United States',
@@ -51,6 +121,13 @@ const TAG_TO_COUNTRY = {
   egyptian: 'Egypt',
   ghanaian: 'Ghana',
   moroccan: 'Morocco',
+  // Oceania
+  australian: 'Australia',
+};
+
+const mapCountryToRegion = (country) => {
+  const region = COUNTRY_TO_REGION[country] ?? 'Other';
+  return { region, country };
 };
 
 // Geography detection: address.country is authoritative; otherwise a
@@ -65,62 +142,6 @@ const getGeographicInfo = (person) => {
     if (country) return mapCountryToRegion(country);
   }
   return { region: 'Not Specified', country: 'Not Specified' };
-};
-
-const mapCountryToRegion = (country) => {
-  // Map countries to regions
-  if (['United States', 'Canada', 'Mexico'].includes(country)) {
-    return { region: 'North America', country };
-  }
-  if (
-    [
-      'United Kingdom',
-      'Germany',
-      'France',
-      'Italy',
-      'Spain',
-      'Poland',
-      'Russia',
-      'Netherlands',
-      'Sweden',
-      'Norway',
-      'Denmark',
-      'Austria',
-      'Greece',
-    ].includes(country)
-  ) {
-    return { region: 'Europe', country };
-  }
-  if (
-    [
-      'China',
-      'Japan',
-      'India',
-      'South Korea',
-      'Thailand',
-      'Singapore',
-      'Indonesia',
-      'Philippines',
-      'Iran',
-      'Pakistan',
-      'Taiwan',
-    ].includes(country)
-  ) {
-    return { region: 'Asia', country };
-  }
-  if (
-    ['Nigeria', 'South Africa', 'Kenya', 'Egypt', 'Ghana', 'Morocco', 'Senegal'].includes(country)
-  ) {
-    return { region: 'Africa', country };
-  }
-  if (['Australia', 'New Zealand', 'Fiji'].includes(country)) {
-    return { region: 'Oceania', country };
-  }
-  if (['Brazil', 'Argentina', 'Chile', 'Colombia', 'Peru'].includes(country)) {
-    return { region: 'South America', country };
-  }
-
-  return { region: 'Other', country };
 };
 
 export class DiversityAnalyzer {

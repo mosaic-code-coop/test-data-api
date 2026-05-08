@@ -19,6 +19,18 @@ Initial public release.
   separate test config).
 - `fetch-test-references` bin and `scripts/fetch-references.ts` for archiving
   reference URLs cited by data packages.
+- `diversity-report` bin (`scripts/diversity-report.js`) — CLI wrapper around
+  the existing `generateDiversityReport` analyzer, accepting `--data`,
+  `--output`, `--dataset-name`, `--acknowledge-deceased-first-nations`, and
+  `--include-unicode-analysis`. Replaces per-package wrapper scripts.
+- `BIO_WRITING_SPEC.md` — shared bio writing guidance referenced by every
+  data package's package-specific addendum.
+- Diversity analyzer rewritten to detect a person's country from
+  `address.country` or a nationality tag, via a single
+  `COUNTRY_TO_REGION` map plus a tag → country alias map. Replaces ~140
+  lines of name- and bio-substring heuristics that miscounted underrepresented
+  regions. Country coverage extended to all countries currently appearing in
+  bundled data packages.
 - ESLint (flat config, `typescript-eslint` recommended) + Prettier configuration.
 - CI workflow runs lint, format check, typecheck, build, and tests.
 

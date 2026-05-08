@@ -52,7 +52,8 @@
   },
   "files": [
     "dist",
-    "scripts"
+    "scripts",
+    "BIO_WRITING_SPEC.md"
   ],
   "bin": {
     "fetch-test-references": "scripts/fetch-test-references",
