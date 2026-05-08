@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Initial public release.
 
+### Renamed
+
+- Package name: `test-data-factory` → `@mosaic-code/test-data-factory`. The
+  unscoped name is owned by another publisher on npm; scoping under the
+  `@mosaic-code` org is the path forward. Scoped publishes default to
+  private — use `npm publish --access public`.
+
 ### Added
 
 - `DataFactory` class for deterministic loading and querying of test data packages.

@@ -5,13 +5,13 @@ A deterministic test data API that accepts data packages and provides fast retri
 ## Installation
 
 ```bash
-npm install test-data-factory
+npm install @mosaic-code/test-data-factory
 ```
 
 ## Basic Usage
 
 ```typescript
-import DataFactory from 'test-data-factory';
+import DataFactory from '@mosaic-code/test-data-factory';
 import firstNationsData from 'first-nations-data-factory'; // Your data package
 
 const factory = new DataFactory(firstNationsData);
@@ -73,7 +73,7 @@ For datasets with image URLs, you can run separate image validation tests to ens
 - Response bodies don't contain HTML (prevents redirects to error pages)
 
 ```typescript
-import { validateImageUrls } from 'test-data-factory';
+import { validateImageUrls } from '@mosaic-code/test-data-factory';
 
 // Run image validation separately (slower, uses bandwidth)
 validateImageUrls(yourDataPackage, {
@@ -181,7 +181,7 @@ const factory = new DataFactory(dataPackage, {
 
 ```typescript
 import { describe, it, expect } from 'vitest';
-import DataFactory from 'test-data-factory';
+import DataFactory from '@mosaic-code/test-data-factory';
 import myDataPackage from './my-data-package';
 
 describe('User Service', () => {

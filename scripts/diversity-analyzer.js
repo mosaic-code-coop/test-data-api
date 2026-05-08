@@ -333,7 +333,7 @@ export class DiversityAnalyzer {
     }
 
     markdown += `\n---
-*Report generated using test-data-factory diversity analyzer*
+*Report generated using @mosaic-code/test-data-factory diversity analyzer*
 `;
 
     writeFileSync(outputPath, markdown, 'utf8');

@@ -1,6 +1,6 @@
 # Bio Writing Specification
 
-This spec applies to all bios in datasets built on `test-data-factory`. Individual
+This spec applies to all bios in datasets built on `@mosaic-code/test-data-factory`. Individual
 data packages may add a short addendum for terminology or sensitivity guidance
 specific to their subject matter — see each package's own `BIO_WRITING_SPEC.md`.
 
