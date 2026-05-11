@@ -4,3 +4,8 @@ package-lock.json
 CHANGELOG.md
 .claude/
 .github/
+demo/public/data/
+demo/dist/
+demo/test-results/
+demo/playwright-report/
+demo/scripts/.cache/

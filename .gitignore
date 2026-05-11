@@ -4,3 +4,8 @@ dist
 *.log
 src/*.js
 src/*.d.ts
+demo/node_modules
+demo/dist
+demo/test-results
+demo/playwright-report
+demo/scripts/.cache

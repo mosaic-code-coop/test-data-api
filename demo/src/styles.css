@@ -1,0 +1,400 @@
+:root {
+  --bg: #0f1115;
+  --surface: #181b22;
+  --surface-2: #21252e;
+  --border: #2a3040;
+  --text: #e8e8ed;
+  --text-dim: #9aa0ad;
+  --accent: #7aa2f7;
+  --accent-warm: #e0af68;
+  --danger: #f7768e;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--border);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.app-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.app-header .kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+.app-header h1 {
+  margin: 0.1rem 0 0.4rem;
+  font-size: 1.85rem;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+
+.app-header .lede {
+  margin: 0;
+  color: var(--text-dim);
+  line-height: 1.55;
+  max-width: 60ch;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.profile-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.5rem;
+}
+
+.profile-card img.portrait {
+  width: 200px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.profile-card .body h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.profile-card .subtitle {
+  color: var(--text-dim);
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.profile-card .pronouns {
+  display: inline-block;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.1rem 0.65rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+button.pronouns.country {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+button.pronouns.country:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.profile-card .bio {
+  margin: 0.75rem 0;
+  line-height: 1.55;
+}
+
+.test-data {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface-2);
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+}
+
+.test-data-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}
+
+.test-data dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(100px, max-content) 1fr;
+  column-gap: 1rem;
+  row-gap: 0.25rem;
+  font-size: 0.88rem;
+}
+
+.test-data dt {
+  color: var(--text-dim);
+}
+
+.test-data dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.test-data .address-line {
+  display: block;
+}
+
+.chip-group {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.chip-group .label {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-right: 0.25rem;
+}
+
+.chip {
+  display: inline-block;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+button.chip {
+  cursor: pointer;
+}
+
+button.chip:hover {
+  background: var(--border);
+}
+
+blockquote {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--accent-warm);
+  background: var(--surface-2);
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+}
+
+blockquote cite {
+  display: block;
+  margin-top: 0.4rem;
+  font-style: normal;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.expander {
+  margin-top: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.expander h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.expander p {
+  margin: 0 0 0.75rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.member-strip {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.member-strip button {
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid var(--border);
+  overflow: hidden;
+  width: 44px;
+  height: 44px;
+}
+
+.member-strip button:hover {
+  border-color: var(--accent);
+}
+
+.member-strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.member-summary {
+  margin-top: 0.5rem;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.member-summary button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0;
+  cursor: pointer;
+}
+
+.member-summary button:hover {
+  text-decoration: underline;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.footer-links a.danger {
+  color: var(--danger);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 520px;
+  width: 100%;
+}
+
+.modal h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+.modal p {
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.modal .actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.modal .primary {
+  background: var(--accent);
+  color: #0f1115;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.modal .primary:hover {
+  background: #91b4ff;
+}
+
+.status {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  color: var(--text-dim);
+}
+
+.status.error {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+@media (max-width: 600px) {
+  .profile-card {
+    grid-template-columns: 1fr;
+  }
+  .profile-card img.portrait {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    margin: 0 auto;
+  }
+}
