@@ -95,8 +95,6 @@ export interface ValidationOptions {
   minBioLength?: number;
   /** Whether this dataset contains First Nations people */
   containsFirstNationsPeople?: boolean;
-  /** Whether to validate image URLs (default: true) */
-  validateImageUrls?: boolean;
   /** Whether to validate reference URLs (default: true) */
   validateReferenceUrls?: boolean;
   /** Timeout for HTTP requests in milliseconds (default: 10000) */

@@ -55,7 +55,6 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
     requireDateOfBirth: options.requireDateOfBirth ?? true,
     minBioLength: options.minBioLength || 50,
     containsFirstNationsPeople: options.containsFirstNationsPeople || false,
-    validateImageUrls: options.validateImageUrls ?? false,
     validateReferenceUrls: options.validateReferenceUrls ?? false,
     httpTimeout: options.httpTimeout || 10000,
     customValidations: options.customValidations || [],
@@ -202,15 +201,18 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
           });
         });
 
-        it('has valid picture URL', () => {
-          validateRequiredString(person, 'picture', personId);
-          validatePattern(
-            person,
-            'picture',
-            /^https:\/\/.+/,
-            personId,
-            'picture must be valid HTTPS URL',
-          );
+        it('has valid picture URL or null', () => {
+          // Per schema, picture is `string | null`. When set, it must be HTTPS.
+          if (person.picture !== null) {
+            validateRequiredString(person, 'picture', personId);
+            validatePattern(
+              person,
+              'picture',
+              /^https:\/\/.+/,
+              personId,
+              'picture must be valid HTTPS URL',
+            );
+          }
         });
 
         it('has valid group memberships structure', () => {
@@ -374,39 +376,6 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
     }
   });
 
-  // HTTP validation tests - only run when explicitly enabled
-  if (defaultOptions.validateImageUrls) {
-    describe(`${defaultOptions.datasetName} - HTTP Image Validation`, () => {
-      it('should have accessible picture URLs', async () => {
-        const people = dataPackage.people;
-        const results = await Promise.allSettled(
-          people.map(async (person, index) => {
-            const personId = getPersonId(person, index);
-            try {
-              const response = await fetch(person.picture!, {
-                method: 'HEAD',
-              });
-              if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-              }
-              return { personId, success: true };
-            } catch (error) {
-              throw new Error(`${personId}: ${(error as Error).message}`);
-            }
-          }),
-        );
-
-        const failures = results
-          .filter((result) => result.status === 'rejected')
-          .map((result) => (result as PromiseRejectedResult).reason.message);
-
-        if (failures.length > 0) {
-          throw new Error(`Image URL validation failed:\n${failures.join('\n')}`);
-        }
-      }, 30000); // 30 second timeout for HTTP tests
-    });
-  }
-
   // Run custom validations as separate tests
   if (defaultOptions.customValidations.length > 0) {
     describe(`${defaultOptions.datasetName} - Custom Validations`, () => {
@@ -423,45 +392,4 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
       });
     });
   }
-}
-
-// Separate HTTP image validation function that can be used independently
-export function validateImageUrls(
-  dataPackage: DataPackage,
-  options: { datasetName?: string; httpTimeout?: number } = {},
-) {
-  const defaultOptions = {
-    datasetName: options.datasetName || 'Dataset',
-    httpTimeout: options.httpTimeout || 15000,
-  };
-
-  describe(`${defaultOptions.datasetName} - HTTP Image Validation`, () => {
-    it('should have accessible picture URLs', async () => {
-      const people = dataPackage.people;
-      const results = await Promise.allSettled(
-        people.map(async (person, index) => {
-          const personId = getPersonId(person, index);
-          try {
-            const response = await fetch(person.picture!, {
-              method: 'HEAD',
-            });
-            if (!response.ok) {
-              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            return { personId, success: true };
-          } catch (error) {
-            throw new Error(`${personId}: ${(error as Error).message}`);
-          }
-        }),
-      );
-
-      const failures = results
-        .filter((result) => result.status === 'rejected')
-        .map((result) => (result as PromiseRejectedResult).reason.message);
-
-      if (failures.length > 0) {
-        throw new Error(`Image URL validation failed:\n${failures.join('\n')}`);
-      }
-    }, 30000); // 30 second timeout for HTTP tests
-  });
 }

@@ -1,13 +1,46 @@
 import { describe, it, expect } from 'vitest';
+import { fileTypeFromBuffer } from 'file-type';
 import { DataPackage } from './types.js';
 
 interface ImageValidationOptions {
   /** Dataset name for error reporting */
   datasetName?: string;
-  /** Timeout for HTTP requests in milliseconds (default: 10000) */
+  /** Timeout for each HTTP request in milliseconds (default: 10000) */
   httpTimeout?: number;
+  /** Overall timeout for each vitest it() block in milliseconds (default: 600000 — 10 minutes) */
+  testTimeout?: number;
+  /** Delay between successive *uncached* requests in milliseconds (default: 150) */
+  requestDelay?: number;
   /** Whether to skip image validation (useful for CI/CD) */
   skipImageValidation?: boolean;
+}
+
+// Wikimedia (and other well-behaved hosts) require a descriptive User-Agent or
+// they return 429. Without this, Node's fetch sends a default that gets
+// rate-limited heavily.
+const USER_AGENT =
+  'mosaic-test-data-image-validator/1.0 (+https://github.com/mosaic-sunrise/test-data-api)';
+
+const BACKOFF_MS = [500, 1500, 4000];
+
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+async function fetchWithRetry(url: string, timeoutMs: number): Promise<Response> {
+  for (let attempt = 0; attempt < BACKOFF_MS.length + 1; attempt += 1) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { 'User-Agent': USER_AGENT },
+      });
+      if (response.status !== 429 || attempt === BACKOFF_MS.length) return response;
+      await sleep(BACKOFF_MS[attempt]);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  throw new Error(`fetchWithRetry: unreachable (url=${url})`);
 }
 
 export async function validateImageUrls(
@@ -17,6 +50,8 @@ export async function validateImageUrls(
   const defaultOptions: Required<ImageValidationOptions> = {
     datasetName: options.datasetName || 'Dataset',
     httpTimeout: options.httpTimeout || 10000,
+    testTimeout: options.testTimeout || 600000,
+    requestDelay: options.requestDelay ?? 150,
     skipImageValidation: options.skipImageValidation ?? false,
   };
 
@@ -33,49 +68,53 @@ export async function validateImageUrls(
     const people = dataPackage.people;
     const groups = dataPackage.groups;
 
-    // Helper function to validate a single image URL
-    async function validateImageUrl(url: string, context: string): Promise<void> {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), defaultOptions.httpTimeout);
+    // Cache validation results per URL so a URL reused across many profiles
+    // (e.g. a shared placeholder) is only fetched once. Otherwise the origin
+    // rate-limits us with 429 after many duplicate requests.
+    const cache = new Map<string, Promise<void>>();
 
-        const response = await fetch(url, {
-          method: 'HEAD', // Use HEAD to avoid downloading full image
-          signal: controller.signal,
-        });
+    async function fetchAndValidate(url: string): Promise<void> {
+      const response = await fetchWithRetry(url, defaultOptions.httpTimeout);
+      if (response.status !== 200) throw new Error(`GET returned status ${response.status}`);
 
-        clearTimeout(timeoutId);
+      const contentType = response.headers.get('content-type');
+      if (!contentType) throw new Error('missing content-type header');
+      if (!/^image\//.test(contentType)) throw new Error(`content-type is ${contentType}`);
 
-        // Check status code
-        expect(response.status, `${context}: should return 200 status`).toBe(200);
+      const buffer = new Uint8Array(await response.arrayBuffer());
 
-        // Check content type
-        const contentType = response.headers.get('content-type');
-        expect(contentType, `${context}: should have content-type header`).toBeDefined();
-        expect(contentType, `${context}: should be an image content type`).toMatch(/^image\//);
-
-        // For additional safety, also check with GET request to verify no HTML in body
-        const getResponse = await fetch(url, {
-          method: 'GET',
-          signal: controller.signal,
-        });
-
-        const body = await getResponse.text();
-
-        // Check that response doesn't contain HTML tags
-        const hasHtmlTags = /<[^>]*>/.test(body);
-        expect(hasHtmlTags, `${context}: should not contain HTML in response body`).toBe(false);
-
-        // Check that response doesn't contain common HTML indicators
-        const hasHtmlIndicators = /<!DOCTYPE|html|head|body|script|style/i.test(body);
-        expect(hasHtmlIndicators, `${context}: should not contain HTML document structure`).toBe(
-          false,
+      if (/^image\/svg\+xml/.test(contentType)) {
+        // file-type doesn't sniff SVG (text format, no magic bytes); look for
+        // an <svg root element in the head of the body instead.
+        const bodyPreview = new TextDecoder('utf-8', { fatal: false }).decode(
+          buffer.slice(0, 4096),
         );
-      } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-          throw new Error(`${context}: request timed out after ${defaultOptions.httpTimeout}ms`);
+        if (!/<svg[\s>]/i.test(bodyPreview)) throw new Error('SVG body missing <svg root element');
+      } else {
+        const detected = await fileTypeFromBuffer(buffer);
+        if (!detected || !/^image\//.test(detected.mime)) {
+          throw new Error(
+            `body is not a recognised image (detected=${detected?.mime ?? 'unknown'})`,
+          );
         }
-        throw error;
+      }
+
+      // Throttle between *uncached* fetches only; this sleep is inside the
+      // cached promise so duplicate URLs skip it.
+      if (defaultOptions.requestDelay > 0) await sleep(defaultOptions.requestDelay);
+    }
+
+    async function validateImageUrl(url: string, context: string): Promise<void> {
+      let pending = cache.get(url);
+      if (!pending) {
+        pending = fetchAndValidate(url);
+        cache.set(url, pending);
+      }
+      try {
+        await pending;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        throw new Error(`${context}: ${message}`);
       }
     }
 
@@ -83,25 +122,23 @@ export async function validateImageUrls(
       'should have valid person image URLs',
       async () => {
         const peopleWithImages = people.filter((person) => person.picture);
-
         for (const person of peopleWithImages) {
           const personId = person.fullName || person.preferredName || person.id;
           await validateImageUrl(person.picture!, `${personId} (${person.picture})`);
         }
       },
-      defaultOptions.httpTimeout + 5000,
-    ); // Add buffer time for test execution
+      defaultOptions.testTimeout,
+    );
 
     it(
       'should have valid group image URLs',
       async () => {
         const groupsWithImages = groups.filter((group) => group.picture);
-
         for (const group of groupsWithImages) {
           await validateImageUrl(group.picture!, `Group ${group.id} (${group.picture})`);
         }
       },
-      defaultOptions.httpTimeout + 5000,
-    ); // Add buffer time for test execution
+      defaultOptions.testTimeout,
+    );
   });
 }
