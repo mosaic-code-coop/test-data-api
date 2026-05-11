@@ -143,6 +143,19 @@ Data packages must provide objects with these structures:
 - date: Date object (required)
 - attendeeIds: array of person IDs (required)
 
+### 4.5 Realism Convention — Groups and Events
+
+People entries must be real, verifiable individuals. Groups and events are different: some are real organisations or events; others are illustrative fixtures invented for test variety.
+
+**Any group or event whose `name` does not correspond to a real-world organisation or event MUST be prefixed with `[Test] `.** For example:
+
+- Real group: `"name": "American Indian Movement"`
+- Fixture group: `"name": "[Test] Indigenous Climate Council"`
+- Real event: `"name": "Artemis II Lunar Flyby Mission"`
+- Fixture event: `"name": "[Test] Mathematics Education Workshop"`
+
+This makes fixtures visually distinguishable from real entries, prevents readers from mistaking invented orgs for real ones, and lets consumers filter fixtures if they need only verifiable data. Fixture groups should also use a `.test` TLD for their website (per RFC 2606), e.g. `https://indigenousclimatecouncil.test`.
+
 ## 5. Performance Requirements
 
 - Library initialization: Under 100ms

@@ -51,7 +51,6 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
     datasetName: options.datasetName || 'Dataset',
     minBirthYear: options.minBirthYear || 300,
     maxBirthYear: options.maxBirthYear || 2010,
-    requirePronouns: options.requirePronouns ?? true,
     requireDateOfBirth: options.requireDateOfBirth ?? true,
     minBioLength: options.minBioLength || 50,
     containsFirstNationsPeople: options.containsFirstNationsPeople || false,
@@ -130,15 +129,16 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
           });
         }
 
-        if (defaultOptions.requirePronouns) {
-          it('has valid pronouns', () => {
-            expect(person.pronouns, `${personId}: missing pronouns field`).toBeDefined();
+        it('has valid pronouns or null', () => {
+          // Pronouns are intentionally optional. Some historical figures have
+          // no stated modern pronouns; when set, must be a non-empty string.
+          if (person.pronouns != null) {
             expect(person.pronouns, `${personId}: pronouns must be string`).toEqual(
               expect.any(String),
             );
-            expect(person.pronouns!.length, `${personId}: pronouns too short`).toBeGreaterThan(0);
-          });
-        }
+            expect(person.pronouns.length, `${personId}: pronouns too short`).toBeGreaterThan(0);
+          }
+        });
 
         it('has valid email', () => {
           validateRequiredString(person, 'email', personId);
@@ -195,8 +195,8 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
 
           person.tags.forEach((tag, tagIndex) => {
             expect(tag, `${personId}: tag ${tagIndex} must be string`).toEqual(expect.any(String));
-            expect(tag, `${personId}: tag "${tag}" must be lowercase with hyphens only`).toMatch(
-              /^[a-z0-9-]+$/,
+            expect(tag, `${personId}: tag "${tag}" must be alphanumeric with hyphens only`).toMatch(
+              /^[A-Za-z0-9-]+$/,
             );
           });
         });

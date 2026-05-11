@@ -14,7 +14,7 @@ export interface Person {
   surname?: string;
   englishName?: string;
   dateOfBirth?: Date;
-  pronouns?: string;
+  pronouns?: string | null;
   bio: string | null;
   email: string;
   phone: string | null;
@@ -87,8 +87,6 @@ export interface ValidationOptions {
   minBirthYear?: number;
   /** Maximum birth year for validation (default: 2010) */
   maxBirthYear?: number;
-  /** Whether to require pronouns field (default: true) */
-  requirePronouns?: boolean;
   /** Whether to require dateOfBirth field (default: true) */
   requireDateOfBirth?: boolean;
   /** Minimum bio length in characters (default: 50) */
