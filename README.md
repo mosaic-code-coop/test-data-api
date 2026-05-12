@@ -95,6 +95,66 @@ validateImageUrls(yourDataPackage, { skipImageValidation: true });
 - May timeout on slow connections
 - Should be run selectively in development/testing
 
+## Building a Data Package from Per-Record Files
+
+For larger data packages, splitting each record into its own file (and assembling at build time) makes contributions and reviews much easier. This package ships an `assemble-data-package` CLI that does exactly that.
+
+### Conventions
+
+```
+your-data-package/
+  src/
+    person/<id>.ts     # one file per person, default-exports a Person
+    group/<id>.ts      # one file per group
+    event/<id>.ts      # one file per event
+    _generated/        # ← gitignore; produced by the assembler
+      data-package.ts
+    index.ts           # re-exports from _generated/
+```
+
+- Filename basename must match the record's `id` field
+- Each per-record file `export default` a typed record:
+  ```ts
+  import type { Person } from '@mosaic-code/test-data-factory';
+  export default {
+    id: 'ada-lovelace',
+    fullName: 'Ada Lovelace',
+    // ...
+  } satisfies Person;
+  ```
+
+### npm scripts
+
+```json
+{
+  "scripts": {
+    "assemble": "assemble-data-package --export-name=myData",
+    "prebuild": "npm run assemble",
+    "build": "tsc",
+    "pretest": "npm run assemble",
+    "test": "vitest run"
+  }
+}
+```
+
+The assembler validates IDs are unique, `groupMemberships` resolve, and `attendeeIds` resolve before writing the generated file.
+
+### CLI flags
+
+- `--export-name=<name>` — the named export in the generated file (defaults to `dataPackage`)
+- `--contains-first-nations` — sets `metadata.containsFirstNationsPeople = true` (required if any record represents First Nations persons; gates loading behind acknowledgment)
+
+### Migrating an existing monolithic data package
+
+If you have a single `src/index.ts` with all records inlined, run:
+
+```
+npx migrate-monolith                         # for data packages with clean slug IDs
+npx migrate-monolith --rename-person-ids     # regenerate person IDs as slugs from fullName
+```
+
+This writes per-record files under `src/person/`, `src/group/`, `src/event/` and moves the old structure to `.trash/`. Run it once per package.
+
 ## Data Package Format
 
 Your data package should export an object with:

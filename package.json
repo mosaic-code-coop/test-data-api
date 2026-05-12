@@ -57,7 +57,9 @@
   ],
   "bin": {
     "fetch-test-references": "scripts/fetch-test-references",
-    "diversity-report": "scripts/diversity-report.js"
+    "diversity-report": "scripts/diversity-report.js",
+    "assemble-data-package": "scripts/assemble-data-package",
+    "migrate-monolith": "scripts/migrate-monolith"
   },
   "exports": {
     ".": {
