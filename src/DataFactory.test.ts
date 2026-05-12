@@ -255,5 +255,39 @@ describe('DataFactory', () => {
       expect(people).toHaveLength(1);
       expect(people[0].fullName).toBe('New Person');
     });
+
+    it('combines multiple packages and excludes unacknowledged First Nations packages', () => {
+      const fnPackage: DataPackage = {
+        people: [
+          {
+            id: 'fn1',
+            fullName: 'FN Person',
+            bio: 'FN bio',
+            email: 'fn@example.test',
+            phone: '+1234567000',
+            picture: 'https://example.com/fn.jpg',
+            tags: ['activist'],
+            groupMemberships: [],
+            isFirstNations: true,
+          },
+        ],
+        groups: [],
+        events: [],
+        metadata: { containsFirstNationsPeople: true },
+      };
+
+      const withoutAck = new DataFactory([mockDataPackage, fnPackage]);
+      const withoutAckIds = withoutAck.getPeople().map((p) => p.id);
+      expect(withoutAckIds).toEqual(['person1', 'person2', 'person3']);
+
+      const withAck = new DataFactory([mockDataPackage, fnPackage], {
+        acknowledgeDeceasedFirstNations: true,
+      });
+      const withAckIds = withAck
+        .getPeople()
+        .map((p) => p.id)
+        .sort();
+      expect(withAckIds).toEqual(['fn1', 'person1', 'person2', 'person3']);
+    });
   });
 });

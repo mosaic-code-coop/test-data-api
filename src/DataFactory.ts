@@ -37,13 +37,13 @@ export class DataFactory {
     },
   };
 
-  constructor(dataPackage: DataPackage, options?: LoadDataOptions) {
+  constructor(dataPackage: DataPackage | DataPackage[], options?: LoadDataOptions) {
     this.random = new SeededRandom(0);
     this.loadData(dataPackage, options);
   }
 
-  loadData(dataPackage: DataPackage, options?: LoadDataOptions): void {
-    this.dataPackageMetadata = dataPackage.metadata || undefined;
+  loadData(dataPackage: DataPackage | DataPackage[], options?: LoadDataOptions): void {
+    const packages = Array.isArray(dataPackage) ? dataPackage : [dataPackage];
     this.firstNationsAcknowledged = options?.acknowledgeDeceasedFirstNations ?? false;
 
     if (options?.nullabilityOverrides) {
@@ -54,29 +54,29 @@ export class DataFactory {
       };
     }
 
-    // Check if this package contains First Nations people and validate acknowledgment
-    const containsFirstNations =
-      this.dataPackageMetadata?.containsFirstNationsPeople ||
-      this.hasIndividualFirstNationsPeople(dataPackage.people);
+    // Drop any package that requires acknowledgment without one. Other packages
+    // still load — passing [stem, firstNations] without acknowledgment returns
+    // stem's records, not nothing.
+    const anyContainsFirstNations = packages.some((pkg) => this.packageContainsFirstNations(pkg));
+    this.dataPackageMetadata = anyContainsFirstNations
+      ? { containsFirstNationsPeople: true }
+      : undefined;
 
-    if (containsFirstNations && !this.firstNationsAcknowledged) {
-      // Load empty data if First Nations acknowledgment is required but not provided
-      this.originalPeople = [];
-      this.originalGroups = [];
-      this.events = [];
-      this.people = [];
-      this.groups = [];
-      return;
-    }
+    const loadable = this.firstNationsAcknowledged
+      ? packages
+      : packages.filter((pkg) => !this.packageContainsFirstNations(pkg));
 
-    this.originalPeople = [...dataPackage.people];
-    this.originalGroups = [...dataPackage.groups];
-    this.events = [...dataPackage.events];
+    this.originalPeople = loadable.flatMap((pkg) => pkg.people);
+    this.originalGroups = loadable.flatMap((pkg) => pkg.groups);
+    this.events = loadable.flatMap((pkg) => pkg.events);
     this.reprocessNullableFields();
   }
 
-  private hasIndividualFirstNationsPeople(people: Person[]): boolean {
-    return people.some((person) => person.isFirstNations === true);
+  private packageContainsFirstNations(pkg: DataPackage): boolean {
+    return (
+      pkg.metadata?.containsFirstNationsPeople === true ||
+      pkg.people.some((person) => person.isFirstNations === true)
+    );
   }
 
   setSeed(seed: number): void {

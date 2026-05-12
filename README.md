@@ -17,22 +17,28 @@ import DataFactory from '@mosaic-code/test-data-factory';
 import stemAchievementsData from 'stem-achievements-data';
 import firstNationsActivistsData from 'first-nations-activists-data';
 
-// The First Nations acknowledgment should come from a deliberate opt-in,
-// not a hardcoded `true`. In CI/tests, an env var works; in a UI, surface
-// a confirmation prompt and pass its result.
+/**
+ * Some Indigenous and First Nations cultures have important customs around the naming and display of
+ * images or voices of people who have passed away. As a sign of respect for these cultural practices,
+ * the test-data-api requires libraries that depict or describe first nations persons to indiciate
+ * that they do, and to require callers of the library to explicitly opt-in to showing those images.
+ *
+ * In CI/tests, an env var works; in a UI, surface
+ * a confirmation prompt and pass its result.
+ */
 const acknowledgeFirstNations = process.env.ACKNOWLEDGE_FIRST_NATIONS === 'true';
 
-const stem = new DataFactory(stemAchievementsData);
-const fn = new DataFactory(firstNationsActivistsData, {
+// Pass multiple libraries as an array. Any package that requires First Nations
+// acknowledgment is silently dropped when `acknowledgeDeceasedFirstNations`
+// is false — other packages still load.
+const combined = new DataFactory([stemAchievementsData, firstNationsActivistsData], {
   acknowledgeDeceasedFirstNations: acknowledgeFirstNations,
 });
 
-// STEM always loads
-const users = stem.getPeople(3);
-const ada = stem.getPerson('ada-lovelace');
-
-// First Nations loads only when opted in; otherwise getPeople() returns []
-const activists = fn.getPeople(3);
+// Returns people drawn from either library — First Nations persons are
+// excluded when acknowledgeFirstNations is false.
+const users = combined.getPeople(3);
+const ada = combined.getPerson('ada-lovelace');
 ```
 
 ## Deterministic Testing
@@ -230,12 +236,20 @@ The `metadata` field is optional by default, but is **required** when your datas
 
 When `containsFirstNationsPeople` is true:
 
-- The `DataFactory` requires explicit acknowledgment via `acknowledgeDeceasedFirstNations: true`
+- The `DataFactory` only loads the package when `acknowledgeDeceasedFirstNations: true` is passed
+- Without acknowledgment, the package is dropped: single-package callers get an empty result; multi-package callers still get the non-First-Nations packages
 - Validation will check that people marked with `isFirstNations: true` have appropriate cultural markers in their tags or bio
 
 ```typescript
-const factory = new DataFactory(dataPackage, {
-  acknowledgeDeceasedFirstNations: true, // Required for First Nations datasets
+// Single package
+const factory = new DataFactory(firstNationsData, {
+  acknowledgeDeceasedFirstNations: true,
+});
+
+// Multiple packages — unacknowledged First Nations packages are skipped,
+// the rest still load
+const factory = new DataFactory([stemData, firstNationsData], {
+  acknowledgeDeceasedFirstNations: true,
 });
 ```
 
