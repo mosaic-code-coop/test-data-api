@@ -7,6 +7,8 @@ export type {
   Event,
   DataPackage,
   NullabilityConfig,
+  NullabilityOverrides,
+  LoadDataOptions,
   ValidationOptions,
   ValidationResult,
 } from './types.js';

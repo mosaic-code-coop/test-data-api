@@ -50,8 +50,20 @@ export interface DataPackageMetadata {
   containsFirstNationsPeople: boolean;
 }
 
+export interface NullabilityOverrides {
+  person?: Partial<NullabilityConfig['person']>;
+  group?: Partial<NullabilityConfig['group']>;
+}
+
 export interface LoadDataOptions {
   acknowledgeDeceasedFirstNations?: boolean;
+  /**
+   * Override the per-field nullability percentages (0–100). Defaults are
+   * applied for any field not specified. Set every field to 0 to keep all
+   * real values; useful for displays/showcases where you want the data the
+   * library actually contains.
+   */
+  nullabilityOverrides?: NullabilityOverrides;
 }
 
 export interface DataPackage {

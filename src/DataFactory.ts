@@ -46,6 +46,14 @@ export class DataFactory {
     this.dataPackageMetadata = dataPackage.metadata || undefined;
     this.firstNationsAcknowledged = options?.acknowledgeDeceasedFirstNations ?? false;
 
+    if (options?.nullabilityOverrides) {
+      const overrides = options.nullabilityOverrides;
+      this.nullabilityConfig = {
+        person: { ...this.nullabilityConfig.person, ...(overrides.person ?? {}) },
+        group: { ...this.nullabilityConfig.group, ...(overrides.group ?? {}) },
+      };
+    }
+
     // Check if this package contains First Nations people and validate acknowledgment
     const containsFirstNations =
       this.dataPackageMetadata?.containsFirstNationsPeople ||
