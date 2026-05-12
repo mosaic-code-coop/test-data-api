@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { DataFactory, Person } from '../types';
+import { editRecordUrl, type LibraryConfig } from '../libraries';
 
-const props = defineProps<{ person: Person; factory: DataFactory }>();
+const props = defineProps<{ person: Person; factory: DataFactory; library: LibraryConfig }>();
 const emit = defineEmits<{
   (e: 'select-related', payload: { type: 'group' | 'event' | 'tag' | 'country'; id: string }): void;
 }>();
@@ -50,6 +51,8 @@ const addressLines = computed(() => {
   const cityRegion = [a.city, a.state].filter(Boolean).join(', ');
   return [a.street, cityRegion, [a.country, a.zipCode].filter(Boolean).join(' ')].filter(Boolean);
 });
+
+const editUrl = computed(() => editRecordUrl(props.library, 'person', props.person.id));
 
 const silhouette = `${baseUrl}silhouette.svg`;
 
@@ -174,6 +177,9 @@ function onImageError(event: Event) {
             </dd>
           </template>
         </dl>
+        <p class="edit-cta">
+          <a :href="editUrl" target="_blank" rel="noopener">Edit this profile (open a PR) ↗</a>
+        </p>
       </section>
     </div>
   </article>

@@ -27,29 +27,42 @@ const UA = 'test-data-factory-demo-og/1.0 (https://github.com/mosaic-sunrise/tes
 // applied before smartcrop. Use for paintings or full-body shots where smartcrop
 // picks the wrong region. left/top/width/height are in source-image pixels.
 const portraits = [
-  { url: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Katherine_Johnson_1983.jpg' },
+  // Katherine Johnson — tight to her, skip blank grey sides
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/6/6d/Katherine_Johnson_1983.jpg',
+    extractRegion: { left: 400, top: 300, width: 1600, height: 1400 } },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/Ada_lovelace.jpg' },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Marie_Curie_c._1920s.jpg' },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Dorothy_Vaughan_2.jpg' },
-  { url: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Mamie_Clark_1958.jpg' },
+  // Mamie Clark — face is in upper half; smartcrop picks torso without override
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Mamie_Clark_1958.jpg',
+    extractRegion: { left: 150, top: 80, width: 520, height: 440 } },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/f/fc/Annie_Easley.jpg' },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/9/99/CharlotteAngasScott1910.png' },
-  { url: 'https://upload.wikimedia.org/wikipedia/commons/5/57/Maria_Gaetana_Agnesi.jpg' },
-  { url: 'https://upload.wikimedia.org/wikipedia/en/3/3f/Dorothy_Hodgkin_Nobel.jpg' },
-  { url: 'https://upload.wikimedia.org/wikipedia/commons/7/70/Maria_Mitchell_portrait.jpg' },
+  // Agnesi — crop from top so face isn't clipped
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/5/57/Maria_Gaetana_Agnesi.jpg',
+    extractRegion: { left: 0, top: 0, width: 344, height: 260 } },
+  // Hodgkin — portrait-oriented; lock landscape crop to forehead-to-chin
+  { url: 'https://upload.wikimedia.org/wikipedia/en/3/3f/Dorothy_Hodgkin_Nobel.jpg',
+    extractRegion: { left: 0, top: 40, width: 280, height: 183 } },
+  // Maria Mitchell — oval portrait; lock 1.53:1 to forehead-to-chin
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/7/70/Maria_Mitchell_portrait.jpg',
+    extractRegion: { left: 700, top: 900, width: 2300, height: 1500 } },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/Lise_Meitner_NatGeo.jpg' },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Sophie_Brahe_portrait.jpg' },
-  { url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Elena_Piscopia_portrait.jpg' },
+  // Elena Piscopia — full painting; zoom to face area in upper centre
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Elena_Piscopia_portrait.jpg',
+    extractRegion: { left: 130, top: 20, width: 300, height: 340 } },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/d/da/Wangari_Maathai_in_2001.jpg' },
-  { url: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Quarraisha_Abdool_Karim.jpg' },
+  // Quarraisha — crop upper portion to reduce microphone area
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Quarraisha_Abdool_Karim.jpg',
+    extractRegion: { left: 300, top: 0, width: 2600, height: 2000 } },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/c/c3/Jsc2023e0016435_alt.jpg' },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Jsc2023e0016433_alt.jpg' },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/d/dc/Vanessa_E._Wyche_in_2022.jpg' },
   { url: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Jane-goodall_%28cropped%29.jpg' },
-  {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/3/37/Grace_Hopper_and_UNIVAC.jpg',
-    extractRegion: { left: 200, top: 80, width: 200, height: 280 },
-  },
+  // Grace Hopper — crop to her face, out of group shot with UNIVAC
+  { url: 'https://upload.wikimedia.org/wikipedia/commons/3/37/Grace_Hopper_and_UNIVAC.jpg',
+    extractRegion: { left: 200, top: 80, width: 200, height: 280 } },
 ];
 
 function cacheName(url) {

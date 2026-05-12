@@ -75,6 +75,19 @@ button:focus-visible {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.app-header .kicker .star-badge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.app-header .kicker .star-badge img {
+  display: block;
 }
 
 .app-header h1 {
@@ -197,6 +210,15 @@ button.pronouns.country:hover {
 
 .test-data .address-line {
   display: block;
+}
+
+.edit-cta {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+}
+
+.edit-cta a {
+  color: var(--accent-warm);
 }
 
 .chip-group {

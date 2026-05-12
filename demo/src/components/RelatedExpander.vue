@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import type { DataFactory, Person } from '../types';
+import { editRecordUrl, type LibraryConfig } from '../libraries';
 
 type RelatedType = 'group' | 'event' | 'tag' | 'country';
 
@@ -8,6 +9,7 @@ const props = defineProps<{
   factory: DataFactory;
   type: RelatedType;
   id: string;
+  library: LibraryConfig;
 }>();
 
 const emit = defineEmits<{ (e: 'select-person', personId: string): void }>();
@@ -90,6 +92,11 @@ const referenceUrl = computed(() => {
 });
 
 const isLightweight = computed(() => props.type === 'tag' || props.type === 'country');
+
+const editUrl = computed(() => {
+  if (props.type !== 'group' && props.type !== 'event') return null;
+  return editRecordUrl(props.library, props.type, props.id);
+});
 </script>
 
 <template>
@@ -159,6 +166,12 @@ const isLightweight = computed(() => props.type === 'tag' || props.type === 'cou
         </button>
       </template>
       {{ ' ' + summary.verb }}.
+    </p>
+
+    <p v-if="editUrl" class="edit-cta">
+      <a :href="editUrl" target="_blank" rel="noopener">
+        Edit this {{ type }} (open a PR) ↗
+      </a>
     </p>
 
     <div v-if="summary && showAll" class="full-members">
@@ -253,5 +266,15 @@ button.link {
 
 button.link:hover {
   text-decoration: underline;
+}
+
+.edit-cta {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.85rem;
+}
+
+.edit-cta a {
+  color: var(--accent-warm);
+  text-transform: capitalize;
 }
 </style>

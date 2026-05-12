@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LIBRARIES, type LibraryId } from '../libraries';
+import { LIBRARIES, starsBadgeUrl, stargazersUrl, type LibraryId } from '../libraries';
 
 defineProps<{ modelValue: LibraryId }>();
 defineEmits<{ (e: 'update:modelValue', value: LibraryId): void }>();
@@ -8,16 +8,27 @@ defineEmits<{ (e: 'update:modelValue', value: LibraryId): void }>();
 <template>
   <fieldset class="library-selector">
     <legend class="visually-hidden">Choose a test data library</legend>
-    <label v-for="lib in LIBRARIES" :key="lib.id" class="option">
-      <input
-        type="radio"
-        name="library"
-        :value="lib.id"
-        :checked="modelValue === lib.id"
-        @change="$emit('update:modelValue', lib.id as LibraryId)"
-      />
-      <span>{{ lib.label }}</span>
-    </label>
+    <div v-for="lib in LIBRARIES" :key="lib.id" class="option-row">
+      <label class="option">
+        <input
+          type="radio"
+          name="library"
+          :value="lib.id"
+          :checked="modelValue === lib.id"
+          @change="$emit('update:modelValue', lib.id as LibraryId)"
+        />
+        <span>{{ lib.label }}</span>
+      </label>
+      <a
+        :href="stargazersUrl(lib.repoUrl)"
+        target="_blank"
+        rel="noopener"
+        class="star-badge"
+        :aria-label="`Star ${lib.label} on GitHub`"
+      >
+        <img :src="starsBadgeUrl(lib.repoUrl)" alt="GitHub stars" loading="lazy" height="20" />
+      </a>
+    </div>
   </fieldset>
 </template>
 
@@ -33,6 +44,12 @@ defineEmits<{ (e: 'update:modelValue', value: LibraryId): void }>();
   margin: 0;
 }
 
+.option-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .option {
   display: inline-flex;
   align-items: center;
@@ -44,6 +61,16 @@ defineEmits<{ (e: 'update:modelValue', value: LibraryId): void }>();
 
 .option:has(input:checked) {
   background: var(--surface-2);
+}
+
+.star-badge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.star-badge img {
+  display: block;
 }
 
 .option input {

@@ -5,7 +5,7 @@ import AcknowledgmentModal from './components/AcknowledgmentModal.vue';
 import ProfileCard from './components/ProfileCard.vue';
 import RelatedExpander from './components/RelatedExpander.vue';
 import { useFactory } from './composables/useFactory';
-import { LIBRARIES, FRAMEWORK_REPO_URL } from './libraries';
+import { LIBRARIES, FRAMEWORK_REPO_URL, starsBadgeUrl, stargazersUrl } from './libraries';
 
 const {
   library,
@@ -65,7 +65,23 @@ const issueUrl = computed(() => {
 <template>
   <main class="app">
     <header class="app-header">
-      <p class="kicker">Test Data Factory</p>
+      <p class="kicker">
+        <span>Test Data Factory</span>
+        <a
+          :href="stargazersUrl(FRAMEWORK_REPO_URL)"
+          target="_blank"
+          rel="noopener"
+          class="star-badge"
+          aria-label="Star the framework on GitHub"
+        >
+          <img
+            :src="starsBadgeUrl(FRAMEWORK_REPO_URL)"
+            alt="GitHub stars"
+            loading="lazy"
+            height="20"
+          />
+        </a>
+      </p>
       <h1>Names worth remembering, in your test data</h1>
       <p class="lede">
         I've always found test data easier to reason about when it tells real stories.
@@ -96,12 +112,18 @@ const issueUrl = computed(() => {
     <div v-else-if="isLoading" class="status">Loading…</div>
 
     <template v-else-if="current && factory">
-      <ProfileCard :person="current" :factory="factory" @select-related="onSelectRelated" />
+      <ProfileCard
+        :person="current"
+        :factory="factory"
+        :library="currentLibrary"
+        @select-related="onSelectRelated"
+      />
       <RelatedExpander
         v-if="expanded"
         :factory="factory"
         :type="expanded.type"
         :id="expanded.id"
+        :library="currentLibrary"
         @select-person="onSelectPerson"
       />
     </template>
