@@ -2,58 +2,21 @@
 // Writes each generate-og tile to scripts/.cache/tile-NN-<name>.jpg for review.
 // Run after generate-og.mjs to inspect smartcrop's choices.
 
-import { mkdir, writeFile, readFile, access } from 'node:fs/promises';
-import { constants as FS } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join, basename } from 'node:path';
+import { writeFile } from 'node:fs/promises';
+import { join, basename } from 'node:path';
 import sharp from 'sharp';
 import smartcrop from 'smartcrop-sharp';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const cacheDir = join(__dirname, '.cache');
-
-// import portraits + TW/TH from generate-og.mjs
-const ogMod = await import('./generate-og.mjs');
-// generate-og runs main on import, so duplicate the constants instead:
-
-const TW = 240;
-const TH = 157;
-
-const portraitsPath = join(__dirname, 'generate-og.mjs');
-const src = await readFile(portraitsPath, 'utf8');
-const matches = [
-  ...src.matchAll(/\{\s*url:\s*'([^']+)'(?:,\s*extractRegion:\s*(\{[^}]+\}))?\s*\}/g),
-];
-const portraits = matches.map((m) => ({
-  url: m[1],
-  extractRegion: m[2] ? eval('(' + m[2] + ')') : undefined,
-}));
-
-function cacheName(url) {
-  return basename(url)
-    .replace(/%28cropped%29/g, '')
-    .replace(/[^A-Za-z0-9_.-]/g, '_');
-}
-
-async function exists(p) {
-  try {
-    await access(p, FS.F_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { portraits, prepareSource, cacheDir, TW, TH } from './generate-og.mjs';
 
 for (let i = 0; i < portraits.length; i++) {
   const p = portraits[i];
-  const cachePath = join(cacheDir, cacheName(p.url));
-  if (!(await exists(cachePath))) {
-    console.warn(`[skip] missing ${cachePath}`);
+  let buf;
+  try {
+    buf = await prepareSource(p);
+  } catch (err) {
+    console.warn(`[skip] ${p.url}: ${err.message}`);
     continue;
-  }
-  let buf = await readFile(cachePath);
-  if (p.extractRegion) {
-    buf = await sharp(buf).extract(p.extractRegion).toBuffer();
   }
   const cropResult = await smartcrop.crop(buf, { width: TW, height: TH });
   const c = cropResult.topCrop;

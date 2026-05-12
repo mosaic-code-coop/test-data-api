@@ -55,10 +55,25 @@ export function useFactory() {
     try {
       const dataPackage = await loadDataPackage(lib);
       if (myToken !== loadToken) return; // a newer load superseded this one
+      // Showcase: keep every real value present. The factory's default
+      // nullification is useful for tests but defeats the demo's purpose.
       const f = new DataFactory(dataPackage, {
         acknowledgeDeceasedFirstNations: lib.requiresAcknowledgment
           ? isAcknowledged(id)
           : undefined,
+        nullabilityOverrides: {
+          person: {
+            bio: 0,
+            phone: 0,
+            picture: 0,
+            reference: 0,
+            address: 0,
+            quote: 0,
+            dateOfBirth: 0,
+            pronouns: 0,
+          },
+          group: { email: 0, website: 0, picture: 0, reference: 0 },
+        },
       });
       factory.value = f;
       people.value = f.getPeople();
