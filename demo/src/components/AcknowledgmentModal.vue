@@ -35,10 +35,9 @@ function onKeydown(e: KeyboardEvent) {
       aria-describedby="ack-body"
       tabindex="-1"
     >
-      <h2 id="ack-title">A note before viewing this library</h2>
+      <h2 id="ack-title">This library contains names and images of First Nations persons</h2>
       <p id="ack-body">
-        This library contains names and images of First Nations persons, some of whom may now be
-        deceased. Please confirm that you wish to proceed.
+        Some persons depicted may be deceased. Please confirm that you wish to proceed.
       </p>
       <div class="actions">
         <button type="button" @click="emit('decline')">Use STEM library instead</button>

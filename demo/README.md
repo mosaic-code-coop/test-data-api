@@ -77,7 +77,7 @@ That's it. No `gh-pages` branch needed.
 
 ## First Nations acknowledgment
 
-The First Nations library cannot be loaded until the user confirms they understand it contains images of persons who may now be deceased. The confirmation is per-tab (`sessionStorage`); closing the tab re-prompts.
+The First Nations library cannot be loaded until the user confirms they understand it contains names and images of First Nations persons, some of whom may be deceased. The confirmation is per-tab (`sessionStorage`); closing the tab re-prompts.
 
 ## Acknowledged limitations
 

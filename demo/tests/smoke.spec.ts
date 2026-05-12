@@ -44,7 +44,7 @@ test('First Nations library shows acknowledgment modal', async ({ page }) => {
   await page.getByLabel(/First Nations/i).check();
   const dialog = page.getByRole('alertdialog');
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByText(/may now be deceased/i)).toBeVisible();
+  await expect(dialog.getByText(/may be deceased/i)).toBeVisible();
 });
 
 test('declining FN modal switches back to STEM', async ({ page }) => {
