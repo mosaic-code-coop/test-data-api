@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { DataFactory, Person } from '../types';
 import { editRecordUrl, type LibraryConfig } from '../libraries';
 
@@ -56,22 +56,41 @@ const editUrl = computed(() => editRecordUrl(props.library, 'person', props.pers
 
 const silhouette = `${baseUrl}silhouette.svg`;
 
+const imageLoaded = ref(false);
+
+watch(
+  () => props.person.id,
+  () => {
+    imageLoaded.value = false;
+  },
+);
+
+function onImageLoad() {
+  imageLoaded.value = true;
+}
+
 function onImageError(event: Event) {
   const img = event.target as HTMLImageElement;
-  if (img.src.endsWith('silhouette.svg')) return;
+  if (img.src.endsWith('silhouette.svg')) {
+    imageLoaded.value = true;
+    return;
+  }
   img.src = silhouette;
 }
 </script>
 
 <template>
   <article class="profile-card" aria-live="polite">
-    <img
-      class="portrait"
-      :src="portrait"
-      :alt="`Portrait of ${person.fullName}`"
-      loading="lazy"
-      @error="onImageError"
-    />
+    <div class="portrait-frame" :class="{ loading: !imageLoaded }">
+      <img
+        class="portrait"
+        :src="portrait"
+        :alt="`Portrait of ${person.fullName}`"
+        loading="lazy"
+        @load="onImageLoad"
+        @error="onImageError"
+      />
+    </div>
     <div class="body">
       <h2>{{ person.fullName }}</h2>
       <p v-if="subtitle" class="subtitle">{{ subtitle }}</p>
@@ -178,7 +197,7 @@ function onImageError(event: Event) {
           </template>
         </dl>
         <p class="edit-cta">
-          <a :href="editUrl" target="_blank" rel="noopener">Edit this profile (open a PR) ↗</a>
+          <a :href="editUrl" target="_blank" rel="noopener">Propose a Change (Open a PR) ↗</a>
         </p>
       </section>
     </div>

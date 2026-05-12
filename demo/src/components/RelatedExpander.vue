@@ -169,9 +169,7 @@ const editUrl = computed(() => {
     </p>
 
     <p v-if="editUrl" class="edit-cta">
-      <a :href="editUrl" target="_blank" rel="noopener">
-        Edit this {{ type }} (open a PR) ↗
-      </a>
+      <a :href="editUrl" target="_blank" rel="noopener">Propose a Change (Open a PR) ↗</a>
     </p>
 
     <div v-if="summary && showAll" class="full-members">
@@ -275,6 +273,5 @@ button.link:hover {
 
 .edit-cta a {
   color: var(--accent-warm);
-  text-transform: capitalize;
 }
 </style>

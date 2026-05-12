@@ -28,7 +28,7 @@ function onKeydown(e: KeyboardEvent) {
 <template>
   <div class="modal-backdrop" role="presentation" @click.self="emit('decline')">
     <div
-      class="modal"
+      class="modal ack-modal"
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="ack-title"

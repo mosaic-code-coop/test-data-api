@@ -85,9 +85,11 @@ const issueUrl = computed(() => {
       <h1>Names worth remembering, in your test data</h1>
       <p class="lede">
         I've always found test data easier to reason about when it tells real stories.
-        Concrete people are easier to follow than "Test User 1" or Alice and Bob. Given how
-        often marginalised contributions are written out, including them in our demo data and
-        test suites is one small way we can refuse to participate in erasure.
+        Concrete people are easier to follow than "Test User 1" or Alice and Bob.
+      </p>
+      <p class="lede">
+        Given how often marginalised contributions are written out, including them in our demo
+        data and test suites is one small way we can refuse to participate in erasure.
       </p>
     </header>
 
@@ -95,7 +97,7 @@ const issueUrl = computed(() => {
 
     <div class="controls" v-if="!requiresPrompt && !loadError">
       <button type="button" @click="prev" aria-label="Previous profile">← Previous</button>
-      <button type="button" @click="random" aria-label="Random profile">🎲 Random</button>
+      <button type="button" @click="random" aria-label="Random profile">Random</button>
       <button type="button" @click="next" aria-label="Next profile">Next →</button>
     </div>
 
@@ -133,7 +135,7 @@ const issueUrl = computed(() => {
       <a :href="currentLibrary.repoUrl" target="_blank" rel="noopener"
         >{{ currentLibrary.label }} repo ↗</a
       >
-      <a :href="issueUrl" class="danger" target="_blank" rel="noopener"
+      <a :href="issueUrl" class="warm" target="_blank" rel="noopener"
         >See something incorrect? Open an issue ↗</a
       >
     </nav>
