@@ -57,9 +57,36 @@ button:focus-visible {
 }
 
 .app {
-  max-width: 900px;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 900px);
+  gap: 2rem;
+  max-width: 1180px;
   margin: 0 auto;
   padding: 2rem 1.25rem 4rem;
+  align-items: start;
+}
+
+.sidebar {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.main-pane {
+  min-width: 0;
+}
+
+@media (max-width: 800px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .sidebar {
+    display: none;
+  }
 }
 
 .app-header {
@@ -77,17 +104,20 @@ button:focus-visible {
   color: var(--text-dim);
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
-.app-header .kicker .star-badge {
-  display: inline-flex;
-  align-items: center;
-  line-height: 0;
+.app-header .kicker .use-link {
+  font-size: 0.75rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--accent);
+  text-decoration: none;
 }
 
-.app-header .kicker .star-badge img {
-  display: block;
+.app-header .kicker .use-link:hover {
+  text-decoration: underline;
 }
 
 .app-header h1 {
@@ -105,11 +135,76 @@ button:focus-visible {
   max-width: 62ch;
 }
 
+.content-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.browse-btn {
+  display: none;
+}
+
 .controls {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin: 0.5rem 0 1.75rem;
+  margin: 0 0 1.5rem;
+}
+
+@media (max-width: 800px) {
+  .browse-btn {
+    display: inline-block;
+  }
+}
+
+.browse-dialog {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 0;
+  width: min(90vw, 420px);
+  max-height: 80vh;
+}
+
+.browse-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.browse-dialog-body {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  max-height: 80vh;
+  min-height: 0;
+}
+
+.browse-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.browse-dialog-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+.close-btn:hover {
+  color: var(--text);
 }
 
 .profile-card {
@@ -401,6 +496,22 @@ blockquote cite {
 
 .footer-links a.warm {
   color: var(--accent-warm);
+}
+
+.footer-links .repo-link-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-links .star-badge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+.footer-links .star-badge img {
+  display: block;
 }
 
 .modal-backdrop {

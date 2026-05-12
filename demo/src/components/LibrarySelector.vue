@@ -1,91 +1,68 @@
 <script setup lang="ts">
-import { LIBRARIES, starsBadgeUrl, stargazersUrl, type LibraryId } from '../libraries';
+import { LIBRARIES, type LibraryId } from '../libraries';
 
 defineProps<{ modelValue: LibraryId }>();
 defineEmits<{ (e: 'update:modelValue', value: LibraryId): void }>();
 </script>
 
 <template>
-  <fieldset class="library-selector">
-    <legend class="visually-hidden">Choose a test data library</legend>
-    <div v-for="lib in LIBRARIES" :key="lib.id" class="option-row">
-      <label class="option">
-        <input
-          type="radio"
-          name="library"
-          :value="lib.id"
-          :checked="modelValue === lib.id"
-          @change="$emit('update:modelValue', lib.id as LibraryId)"
-        />
-        <span>{{ lib.label }}</span>
-      </label>
-      <a
-        :href="stargazersUrl(lib.repoUrl)"
-        target="_blank"
-        rel="noopener"
-        class="star-badge"
-        :aria-label="`Star ${lib.label} on GitHub`"
-      >
-        <img :src="starsBadgeUrl(lib.repoUrl)" alt="GitHub stars" loading="lazy" height="20" />
-      </a>
-    </div>
-  </fieldset>
+  <div class="library-selector">
+    <label for="library-select">Dataset</label>
+    <select
+      id="library-select"
+      :value="modelValue"
+      @change="
+        $emit('update:modelValue', ($event.target as HTMLSelectElement).value as LibraryId)
+      "
+    >
+      <option v-for="lib in LIBRARIES" :key="lib.id" :value="lib.id">
+        {{ lib.label }}
+      </option>
+    </select>
+  </div>
 </template>
 
 <style scoped>
 .library-selector {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+select {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.5rem;
-  background: var(--surface);
-  margin: 0;
-}
-
-.option-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.option {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.75rem;
-  border-radius: 6px;
+  padding: 0.45rem 2rem 0.45rem 0.75rem;
   cursor: pointer;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
+    linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.1rem) 50%,
+    calc(100% - 0.65rem) 50%;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
 }
 
-.option:has(input:checked) {
-  background: var(--surface-2);
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-.star-badge {
-  display: inline-flex;
-  align-items: center;
-  line-height: 0;
-}
-
-.star-badge img {
-  display: block;
-}
-
-.option input {
-  accent-color: var(--accent);
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+select:hover {
+  border-color: var(--accent);
 }
 </style>
