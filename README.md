@@ -14,18 +14,25 @@ npm install @mosaic-code/test-data-factory
 
 ```typescript
 import DataFactory from '@mosaic-code/test-data-factory';
-import firstNationsData from 'first-nations-data-factory'; // Your data package
+import stemAchievementsData from 'stem-achievements-data';
+import firstNationsActivistsData from 'first-nations-activists-data';
 
-const factory = new DataFactory(firstNationsData);
+// The First Nations acknowledgment should come from a deliberate opt-in,
+// not a hardcoded `true`. In CI/tests, an env var works; in a UI, surface
+// a confirmation prompt and pass its result.
+const acknowledgeFirstNations = process.env.ACKNOWLEDGE_FIRST_NATIONS === 'true';
 
-// Get some people for your test
-const users = factory.getPeople(3);
+const stem = new DataFactory(stemAchievementsData);
+const fn = new DataFactory(firstNationsActivistsData, {
+  acknowledgeDeceasedFirstNations: acknowledgeFirstNations,
+});
 
-// Get a specific person
-const user = factory.getPerson('person-id');
+// STEM always loads
+const users = stem.getPeople(3);
+const ada = stem.getPerson('ada-lovelace');
 
-// Find by email
-const userByEmail = factory.getPersonByEmail('test@example.test');
+// First Nations loads only when opted in; otherwise getPeople() returns []
+const activists = fn.getPeople(3);
 ```
 
 ## Deterministic Testing
