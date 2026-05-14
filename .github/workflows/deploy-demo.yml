@@ -32,7 +32,7 @@ jobs:
           cache: npm
           cache-dependency-path: demo/package-lock.json
 
-      - name: Build framework (needed for file: dep)
+      - name: "Build framework (needed for file: dep)"
         run: |
           npm ci
           npm run build
