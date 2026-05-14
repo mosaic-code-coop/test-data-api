@@ -13,9 +13,9 @@ npm install @mosaic-code/test-data-factory
 ## Basic Usage
 
 ```typescript
-import DataFactory from '@mosaic-code/test-data-factory';
-import stemAchievementsData from '@mosaic-code/stem-achievements-data';
-import firstNationsActivistsData from '@mosaic-code/first-nations-activists-data';
+import DataFactory from "@mosaic-code/test-data-factory";
+import stemAchievementsData from "@mosaic-code/stem-achievements-data";
+import firstNationsActivistsData from "@mosaic-code/first-nations-activists-data";
 
 /**
  * Some Indigenous and First Nations cultures have important customs around the naming and display of
@@ -26,7 +26,7 @@ import firstNationsActivistsData from '@mosaic-code/first-nations-activists-data
  * In CI/tests, an env var works; in a UI, surface
  * a confirmation prompt and pass its result.
  */
-const acknowledgeFirstNations = process.env.ACKNOWLEDGE_FIRST_NATIONS === 'true';
+const acknowledgeFirstNations = process.env.ACKNOWLEDGE_FIRST_NATIONS === "true";
 
 // Pass multiple libraries as an array. Any package that requires First Nations
 // acknowledgment is silently dropped when `acknowledgeDeceasedFirstNations`
@@ -38,7 +38,7 @@ const combined = new DataFactory([stemAchievementsData, firstNationsActivistsDat
 // Returns people drawn from either library — First Nations persons are
 // excluded when acknowledgeFirstNations is false.
 const users = combined.getPeople(3);
-const ada = combined.getPerson('ada-lovelace');
+const ada = combined.getPerson("ada-lovelace");
 ```
 
 ## Deterministic Testing
@@ -88,11 +88,11 @@ For datasets with image URLs, you can run separate image validation tests to ens
 - Response bodies don't contain HTML (prevents redirects to error pages)
 
 ```typescript
-import { validateImageUrls } from '@mosaic-code/test-data-factory';
+import { validateImageUrls } from "@mosaic-code/test-data-factory";
 
 // Run image validation separately (slower, uses bandwidth)
 validateImageUrls(yourDataPackage, {
-  datasetName: 'Your Dataset',
+  datasetName: "Your Dataset",
   httpTimeout: 15000, // 15 second timeout
   skipImageValidation: false,
 });
@@ -128,10 +128,10 @@ your-data-package/
 - Filename basename must match the record's `id` field
 - Each per-record file `export default` a typed record:
   ```ts
-  import type { Person } from '@mosaic-code/test-data-factory';
+  import type { Person } from "@mosaic-code/test-data-factory";
   export default {
-    id: 'ada-lovelace',
-    fullName: 'Ada Lovelace',
+    id: "ada-lovelace",
+    fullName: "Ada Lovelace",
     // ...
   } satisfies Person;
   ```
@@ -263,14 +263,14 @@ const factory = new DataFactory([stemData, firstNationsData], {
 ## Example Test
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import DataFactory from '@mosaic-code/test-data-factory';
-import myDataPackage from './my-data-package';
+import { describe, it, expect } from "vitest";
+import DataFactory from "@mosaic-code/test-data-factory";
+import myDataPackage from "./my-data-package";
 
-describe('User Service', () => {
+describe("User Service", () => {
   const factory = new DataFactory(myDataPackage);
 
-  it('should handle user creation', () => {
+  it("should handle user creation", () => {
     factory.setSeed(42); // Deterministic test data
     const testUser = factory.getPeople(1)[0];
 

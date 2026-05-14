@@ -2,18 +2,18 @@
 // Bundles both test-data libraries to JSON in public/data/<pkg>.json,
 // used as a runtime fallback when esm.sh is unavailable.
 
-import { writeFile, mkdir } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-import stemAchievementsData from '@mosaic-code/stem-achievements-data';
-import firstNationsActivistsData from '@mosaic-code/first-nations-activists-data';
+import { writeFile, mkdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import stemAchievementsData from "@mosaic-code/stem-achievements-data";
+import firstNationsActivistsData from "@mosaic-code/first-nations-activists-data";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const outDir = join(__dirname, '..', 'public', 'data');
+const outDir = join(__dirname, "..", "public", "data");
 
 const bundles = [
-  { name: '@mosaic-code/stem-achievements-data', data: stemAchievementsData },
-  { name: '@mosaic-code/first-nations-activists-data', data: firstNationsActivistsData },
+  { name: "@mosaic-code/stem-achievements-data", data: stemAchievementsData },
+  { name: "@mosaic-code/first-nations-activists-data", data: firstNationsActivistsData },
 ];
 
 await mkdir(outDir, { recursive: true });

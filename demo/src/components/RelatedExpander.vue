@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import type { DataFactory, Person } from '../types';
-import { editRecordUrl, type LibraryConfig } from '../libraries';
+import { computed, ref, watch } from "vue";
+import type { DataFactory, Person } from "../types";
+import { editRecordUrl, type LibraryConfig } from "../libraries";
 
-type RelatedType = 'group' | 'event' | 'tag' | 'country';
+type RelatedType = "group" | "event" | "tag" | "country";
 
 const props = defineProps<{
   factory: DataFactory;
@@ -12,7 +12,7 @@ const props = defineProps<{
   library: LibraryConfig;
 }>();
 
-const emit = defineEmits<{ (e: 'select-person', personId: string): void }>();
+const emit = defineEmits<{ (e: "select-person", personId: string): void }>();
 
 const showAll = ref(false);
 
@@ -23,43 +23,37 @@ watch(
   },
 );
 
-const groupDetail = computed(() =>
-  props.type === 'group' ? props.factory.getGroup(props.id) : null,
-);
-const eventDetail = computed(() =>
-  props.type === 'event' ? props.factory.getEvent(props.id) : null,
-);
+const groupDetail = computed(() => (props.type === "group" ? props.factory.getGroup(props.id) : null));
+const eventDetail = computed(() => (props.type === "event" ? props.factory.getEvent(props.id) : null));
 
 const title = computed(() => {
   if (groupDetail.value) return groupDetail.value.name;
   if (eventDetail.value) return eventDetail.value.name;
-  if (props.type === 'tag') return `#${props.id}`;
-  if (props.type === 'country') return props.id;
-  return '';
+  if (props.type === "tag") return `#${props.id}`;
+  if (props.type === "country") return props.id;
+  return "";
 });
 
 const members = computed<Person[]>(() => {
-  if (props.type === 'group') return props.factory.getPeopleInGroup(props.id);
-  if (props.type === 'event') {
+  if (props.type === "group") return props.factory.getPeopleInGroup(props.id);
+  if (props.type === "event") {
     const ev = props.factory.getEvent(props.id);
     if (!ev) return [];
-    return ev.attendeeIds
-      .map((id) => props.factory.getPerson(id))
-      .filter((p): p is Person => p !== null);
+    return ev.attendeeIds.map((id) => props.factory.getPerson(id)).filter((p): p is Person => p !== null);
   }
-  if (props.type === 'tag') return props.factory.getPeopleByTag(props.id);
-  if (props.type === 'country') {
+  if (props.type === "tag") return props.factory.getPeopleByTag(props.id);
+  if (props.type === "country") {
     return props.factory.getPeople().filter((p) => p.address?.country === props.id);
   }
   return [];
 });
 
 function verbFor(type: RelatedType, count: number): string {
-  if (type === 'group') return count === 1 ? 'is a member' : 'are members';
-  if (type === 'event') return 'attended';
-  if (type === 'tag') return count === 1 ? 'is tagged' : 'are tagged';
-  if (type === 'country') return count === 1 ? 'is from here' : 'are from here';
-  return '';
+  if (type === "group") return count === 1 ? "is a member" : "are members";
+  if (type === "event") return "attended";
+  if (type === "tag") return count === 1 ? "is tagged" : "are tagged";
+  if (type === "country") return count === 1 ? "is from here" : "are from here";
+  return "";
 }
 
 const summary = computed(() => {
@@ -73,13 +67,13 @@ const summary = computed(() => {
 const dateLabel = computed(() => {
   const ev = eventDetail.value;
   if (!ev?.date) return null;
-  const d = typeof ev.date === 'string' ? new Date(ev.date) : ev.date;
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+  const d = typeof ev.date === "string" ? new Date(ev.date) : ev.date;
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 });
 
 const stripMembers = computed(() => members.value.filter((m) => m.picture).slice(0, 6));
 
-const aboutText = computed(() => groupDetail.value?.about ?? '');
+const aboutText = computed(() => groupDetail.value?.about ?? "");
 
 const groupExtras = computed(() => {
   const g = groupDetail.value;
@@ -91,10 +85,10 @@ const referenceUrl = computed(() => {
   return groupDetail.value?.reference ?? eventDetail.value?.reference ?? null;
 });
 
-const isLightweight = computed(() => props.type === 'tag' || props.type === 'country');
+const isLightweight = computed(() => props.type === "tag" || props.type === "country");
 
 const editUrl = computed(() => {
-  if (props.type !== 'group' && props.type !== 'event') return null;
+  if (props.type !== "group" && props.type !== "event") return null;
   return editRecordUrl(props.library, props.type, props.id);
 });
 </script>
@@ -121,18 +115,20 @@ const editUrl = computed(() => {
       <template v-if="groupExtras?.website">
         <dt>Website</dt>
         <dd>
-          <a :href="groupExtras.website" target="_blank" rel="noopener"
-            >{{ groupExtras.website }} ↗</a
-          >
+          <a :href="groupExtras.website" target="_blank" rel="noopener">{{ groupExtras.website }} ↗</a>
         </dd>
       </template>
       <template v-if="groupExtras?.email">
         <dt>Email</dt>
-        <dd><a :href="`mailto:${groupExtras.email}`">{{ groupExtras.email }}</a></dd>
+        <dd>
+          <a :href="`mailto:${groupExtras.email}`">{{ groupExtras.email }}</a>
+        </dd>
       </template>
       <template v-if="referenceUrl">
         <dt>Source</dt>
-        <dd><a :href="referenceUrl" target="_blank" rel="noopener">{{ referenceUrl }} ↗</a></dd>
+        <dd>
+          <a :href="referenceUrl" target="_blank" rel="noopener">{{ referenceUrl }} ↗</a>
+        </dd>
       </template>
     </dl>
 
@@ -155,17 +151,17 @@ const editUrl = computed(() => {
           {{ p.fullName }}
         </button>
         <template v-if="i < summary.spelled.length - 1 && summary.rest === 0">{{
-          i === summary.spelled.length - 2 ? ' and ' : ', '
+          i === summary.spelled.length - 2 ? " and " : ", "
         }}</template>
         <template v-else-if="i < summary.spelled.length - 1">, </template>
       </template>
       <template v-if="summary.rest > 0">
         and
         <button type="button" class="link" @click="showAll = true">
-          {{ summary.rest }} other{{ summary.rest === 1 ? '' : 's' }}
+          {{ summary.rest }} other{{ summary.rest === 1 ? "" : "s" }}
         </button>
       </template>
-      {{ ' ' + summary.verb }}.
+      {{ " " + summary.verb }}.
     </p>
 
     <p v-if="editUrl" class="edit-cta">

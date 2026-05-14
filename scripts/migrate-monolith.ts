@@ -9,22 +9,22 @@
 // `fullName` and rewrites all groupMemberships / event.attendeeIds references
 // to use the new slugs.
 
-import { mkdir, writeFile, readdir, rename } from 'node:fs/promises';
-import { join, basename } from 'node:path';
-import { pathToFileURL } from 'node:url';
-import type { Person, Group, Event, DataPackage } from '../src/types.js';
+import { mkdir, writeFile, readdir, rename } from "node:fs/promises";
+import { join, basename } from "node:path";
+import { pathToFileURL } from "node:url";
+import type { Person, Group, Event, DataPackage } from "../src/types.js";
 
 const cwd = process.cwd();
-const renamePersonIds = process.argv.includes('--rename-person-ids');
+const renamePersonIds = process.argv.includes("--rename-person-ids");
 
 function slugify(input: string): string {
   return input
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '') // strip diacritics
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "") // strip diacritics
     .toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/['']/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function tsStringLiteral(s: string): string {
@@ -32,20 +32,20 @@ function tsStringLiteral(s: string): string {
 }
 
 function tsValue(value: unknown): string {
-  if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
+  if (value === null) return "null";
+  if (value === undefined) return "undefined";
   if (value instanceof Date) return `new Date(${JSON.stringify(value.toISOString())})`;
-  if (typeof value === 'string') return tsStringLiteral(value);
-  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (typeof value === "string") return tsStringLiteral(value);
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
   if (Array.isArray(value)) {
-    if (value.length === 0) return '[]';
-    return `[\n${value.map((v) => `    ${tsValue(v)},`).join('\n')}\n  ]`;
+    if (value.length === 0) return "[]";
+    return `[\n${value.map((v) => `    ${tsValue(v)},`).join("\n")}\n  ]`;
   }
-  if (typeof value === 'object') {
+  if (typeof value === "object") {
     const entries = Object.entries(value as Record<string, unknown>)
       .filter(([, v]) => v !== undefined)
       .map(([k, v]) => `  ${k}: ${tsValue(v)},`);
-    return `{\n${entries.join('\n')}\n}`;
+    return `{\n${entries.join("\n")}\n}`;
   }
   throw new Error(`Cannot serialize value of type ${typeof value}`);
 }
@@ -61,10 +61,10 @@ export default ${body} satisfies ${typeName};
 async function clearDir(dir: string): Promise<void> {
   try {
     const entries = await readdir(dir);
-    const trashDir = join(dir, '.trash');
+    const trashDir = join(dir, ".trash");
     await mkdir(trashDir, { recursive: true });
     for (const e of entries) {
-      if (e === '.trash') continue;
+      if (e === ".trash") continue;
       await rename(join(dir, e), join(trashDir, `${Date.now()}-${e}`));
     }
   } catch {
@@ -73,10 +73,10 @@ async function clearDir(dir: string): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  const monolithUrl = pathToFileURL(join(cwd, 'src/index.ts')).href;
+  const monolithUrl = pathToFileURL(join(cwd, "src/index.ts")).href;
   const mod = (await import(monolithUrl)) as { default?: DataPackage };
   if (!mod.default) {
-    throw new Error('src/index.ts must have a default export of DataPackage');
+    throw new Error("src/index.ts must have a default export of DataPackage");
   }
   const data = mod.default;
 
@@ -99,7 +99,7 @@ async function main(): Promise<void> {
   }
 
   // Migrate people
-  const peopleDir = join(cwd, 'src/person');
+  const peopleDir = join(cwd, "src/person");
   await clearDir(peopleDir);
   await mkdir(peopleDir, { recursive: true });
   let personCount = 0;
@@ -111,23 +111,23 @@ async function main(): Promise<void> {
       // groupMemberships keep their existing IDs (groups not renamed)
     };
     const file = join(peopleDir, `${newId}.ts`);
-    await writeFile(file, renderRecord(rewritten, 'Person'));
+    await writeFile(file, renderRecord(rewritten, "Person"));
     personCount++;
   }
 
   // Migrate groups (IDs unchanged)
-  const groupsDir = join(cwd, 'src/group');
+  const groupsDir = join(cwd, "src/group");
   await clearDir(groupsDir);
   await mkdir(groupsDir, { recursive: true });
   let groupCount = 0;
   for (const g of data.groups) {
     const file = join(groupsDir, `${g.id}.ts`);
-    await writeFile(file, renderRecord(g, 'Group'));
+    await writeFile(file, renderRecord(g, "Group"));
     groupCount++;
   }
 
   // Migrate events (rewrite attendeeIds if person IDs changed)
-  const eventsDir = join(cwd, 'src/event');
+  const eventsDir = join(cwd, "src/event");
   await clearDir(eventsDir);
   await mkdir(eventsDir, { recursive: true });
   let eventCount = 0;
@@ -137,22 +137,18 @@ async function main(): Promise<void> {
       attendeeIds: e.attendeeIds.map(newPersonId),
     };
     const file = join(eventsDir, `${e.id}.ts`);
-    await writeFile(file, renderRecord(rewritten, 'Event'));
+    await writeFile(file, renderRecord(rewritten, "Event"));
     eventCount++;
   }
 
-  console.log(
-    `[migrate-monolith] wrote ${personCount} people, ${groupCount} groups, ${eventCount} events`,
-  );
+  console.log(`[migrate-monolith] wrote ${personCount} people, ${groupCount} groups, ${eventCount} events`);
   if (renamePersonIds) {
     console.log(`[migrate-monolith] rewrote ${personIdMap.size} person IDs as slugs`);
   }
-  console.log(
-    '[migrate-monolith] previous src/person, src/group, src/event contents moved to .trash/',
-  );
+  console.log("[migrate-monolith] previous src/person, src/group, src/event contents moved to .trash/");
 }
 
 main().catch((err) => {
-  console.error('[migrate-monolith] ' + (err as Error).message);
+  console.error("[migrate-monolith] " + (err as Error).message);
   process.exit(1);
 });

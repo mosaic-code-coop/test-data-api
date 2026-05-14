@@ -11,7 +11,7 @@
   font-family:
     system-ui,
     -apple-system,
-    'Segoe UI',
+    "Segoe UI",
     Roboto,
     sans-serif;
   color-scheme: dark;
@@ -227,12 +227,7 @@ button:focus-visible {
 }
 
 .profile-card .portrait-frame.loading {
-  background: linear-gradient(
-    100deg,
-    var(--surface-2) 30%,
-    var(--border) 50%,
-    var(--surface-2) 70%
-  );
+  background: linear-gradient(100deg, var(--surface-2) 30%, var(--border) 50%, var(--surface-2) 70%);
   background-size: 200% 100%;
   animation: portrait-shimmer 1.4s ease-in-out infinite;
 }

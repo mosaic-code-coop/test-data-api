@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
-import { resolve, isAbsolute } from 'path';
-import { pathToFileURL } from 'url';
-import { generateDiversityReport } from './diversity-analyzer.js';
+import { resolve, isAbsolute } from "path";
+import { pathToFileURL } from "url";
+import { generateDiversityReport } from "./diversity-analyzer.js";
 
 function parseArgs(argv) {
   const args = { flags: {}, positional: [] };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (arg.startsWith('--')) {
+    if (arg.startsWith("--")) {
       const key = arg.slice(2);
       const next = argv[i + 1];
-      if (next !== undefined && !next.startsWith('--')) {
+      if (next !== undefined && !next.startsWith("--")) {
         args.flags[key] = next;
         i++;
       } else {
@@ -42,10 +42,10 @@ if (flags.help) {
   process.exit(0);
 }
 
-const required = ['data', 'output', 'dataset-name'];
+const required = ["data", "output", "dataset-name"];
 const missing = required.filter((k) => !flags[k] || flags[k] === true);
 if (missing.length) {
-  process.stderr.write(`Missing required flag(s): ${missing.map((k) => `--${k}`).join(', ')}\n\n`);
+  process.stderr.write(`Missing required flag(s): ${missing.map((k) => `--${k}`).join(", ")}\n\n`);
   process.stderr.write(USAGE);
   process.exit(1);
 }
@@ -56,13 +56,13 @@ const outputPath = isAbsolute(flags.output) ? flags.output : resolve(process.cwd
 const dataModule = await import(pathToFileURL(dataPath).href);
 const dataPackage = dataModule.default ?? dataModule[Object.keys(dataModule)[0]];
 
-if (!dataPackage || typeof dataPackage !== 'object') {
+if (!dataPackage || typeof dataPackage !== "object") {
   process.stderr.write(`Could not load a data package from ${dataPath}\n`);
   process.exit(1);
 }
 
 generateDiversityReport(dataPackage, outputPath, {
-  datasetName: flags['dataset-name'],
-  acknowledgeDeceasedFirstNations: flags['acknowledge-deceased-first-nations'] === true,
-  includeUnicodeAnalysis: flags['include-unicode-analysis'] === true,
+  datasetName: flags["dataset-name"],
+  acknowledgeDeceasedFirstNations: flags["acknowledge-deceased-first-nations"] === true,
+  includeUnicodeAnalysis: flags["include-unicode-analysis"] === true,
 });

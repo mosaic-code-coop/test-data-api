@@ -51,8 +51,8 @@ export interface DataPackageMetadata {
 }
 
 export interface NullabilityOverrides {
-  person?: Partial<NullabilityConfig['person']>;
-  group?: Partial<NullabilityConfig['group']>;
+  person?: Partial<NullabilityConfig["person"]>;
+  group?: Partial<NullabilityConfig["group"]>;
 }
 
 export interface LoadDataOptions {

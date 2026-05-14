@@ -4,6 +4,7 @@ package-lock.json
 CHANGELOG.md
 .claude/
 .github/
+.trash/
 demo/public/data/
 demo/dist/
 demo/test-results/

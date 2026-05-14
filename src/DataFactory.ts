@@ -1,13 +1,5 @@
-import {
-  Person,
-  Group,
-  Event,
-  DataPackage,
-  NullabilityConfig,
-  LoadDataOptions,
-  DataPackageMetadata,
-} from './types.js';
-import { SeededRandom } from './random.js';
+import { Person, Group, Event, DataPackage, NullabilityConfig, LoadDataOptions, DataPackageMetadata } from "./types.js";
+import { SeededRandom } from "./random.js";
 
 export class DataFactory {
   private originalPeople: Person[] = [];
@@ -58,9 +50,7 @@ export class DataFactory {
     // still load — passing [stem, firstNations] without acknowledgment returns
     // stem's records, not nothing.
     const anyContainsFirstNations = packages.some((pkg) => this.packageContainsFirstNations(pkg));
-    this.dataPackageMetadata = anyContainsFirstNations
-      ? { containsFirstNationsPeople: true }
-      : undefined;
+    this.dataPackageMetadata = anyContainsFirstNations ? { containsFirstNationsPeople: true } : undefined;
 
     const loadable = this.firstNationsAcknowledged
       ? packages
@@ -74,8 +64,7 @@ export class DataFactory {
 
   private packageContainsFirstNations(pkg: DataPackage): boolean {
     return (
-      pkg.metadata?.containsFirstNationsPeople === true ||
-      pkg.people.some((person) => person.isFirstNations === true)
+      pkg.metadata?.containsFirstNationsPeople === true || pkg.people.some((person) => person.isFirstNations === true)
     );
   }
 
@@ -97,7 +86,7 @@ export class DataFactory {
       !this.firstNationsAcknowledged
     ) {
       throw new Error(
-        'No people available. This dataset contains First Nations people and requires acknowledgment of cultural protocols regarding deceased persons. Please reload with appropriate acknowledgment flag or load a different or additional dataset.',
+        "No people available. This dataset contains First Nations people and requires acknowledgment of cultural protocols regarding deceased persons. Please reload with appropriate acknowledgment flag or load a different or additional dataset.",
       );
     }
 
@@ -152,27 +141,19 @@ export class DataFactory {
     const currentSeed = this.random.getSeed();
     const tempRandom = new SeededRandom(currentSeed);
 
-    this.people = this.processNullableFieldsWithRandom(
-      [...this.originalPeople],
-      'person',
-      tempRandom,
-    );
-    this.groups = this.processNullableFieldsWithRandom(
-      [...this.originalGroups],
-      'group',
-      tempRandom,
-    );
+    this.people = this.processNullableFieldsWithRandom([...this.originalPeople], "person", tempRandom);
+    this.groups = this.processNullableFieldsWithRandom([...this.originalGroups], "group", tempRandom);
   }
 
   private processNullableFieldsWithRandom<T extends Person | Group>(
     items: T[],
-    type: 'person' | 'group',
+    type: "person" | "group",
     random: SeededRandom,
   ): T[] {
     return items.map((item) => {
       const processed = { ...item };
 
-      if (type === 'person' && 'bio' in processed) {
+      if (type === "person" && "bio" in processed) {
         const person = processed as Person;
         if (random.shouldBeNull(this.nullabilityConfig.person.bio)) {
           person.bio = null;
@@ -185,7 +166,7 @@ export class DataFactory {
         }
       }
 
-      if (type === 'group' && 'email' in processed) {
+      if (type === "group" && "email" in processed) {
         const group = processed as Group;
         if (random.shouldBeNull(this.nullabilityConfig.group.email)) {
           group.email = null;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { LIBRARIES, type LibraryId } from '../libraries';
+import { LIBRARIES, type LibraryId } from "../libraries";
 
 defineProps<{ modelValue: LibraryId }>();
-defineEmits<{ (e: 'update:modelValue', value: LibraryId): void }>();
+defineEmits<{ (e: "update:modelValue", value: LibraryId): void }>();
 </script>
 
 <template>
@@ -11,9 +11,7 @@ defineEmits<{ (e: 'update:modelValue', value: LibraryId): void }>();
     <select
       id="library-select"
       :value="modelValue"
-      @change="
-        $emit('update:modelValue', ($event.target as HTMLSelectElement).value as LibraryId)
-      "
+      @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value as LibraryId)"
     >
       <option v-for="lib in LIBRARIES" :key="lib.id" :value="lib.id">
         {{ lib.label }}
@@ -46,7 +44,8 @@ select {
   padding: 0.45rem 2rem 0.45rem 0.75rem;
   cursor: pointer;
   appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--text-dim) 50%),
     linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
   background-position:
     calc(100% - 1.1rem) 50%,

@@ -1,20 +1,18 @@
-import { ref, shallowRef, computed, watch } from 'vue';
-import { DataFactory, type DataPackage, type Person } from '../types';
-import { LIBRARIES, type LibraryConfig, type LibraryId } from '../libraries';
-import { useAcknowledgment } from './useAcknowledgment';
-import { useUrlState } from './useUrlState';
+import { ref, shallowRef, computed, watch } from "vue";
+import { DataFactory, type DataPackage, type Person } from "../types";
+import { LIBRARIES, type LibraryConfig, type LibraryId } from "../libraries";
+import { useAcknowledgment } from "./useAcknowledgment";
+import { useUrlState } from "./useUrlState";
 
 async function loadDataPackage(pkg: LibraryConfig): Promise<DataPackage> {
   const cdnUrl = `https://esm.sh/${pkg.npmName}@latest`;
   try {
-    const mod: { default?: DataPackage } & Record<string, unknown> = await import(
-      /* @vite-ignore */ cdnUrl
-    );
+    const mod: { default?: DataPackage } & Record<string, unknown> = await import(/* @vite-ignore */ cdnUrl);
     const data = mod.default && Array.isArray(mod.default.people) ? mod.default : undefined;
     if (data) return data;
     throw new Error(`Default export missing on ${cdnUrl}`);
   } catch (cdnErr) {
-    const base = import.meta.env.BASE_URL || '/';
+    const base = import.meta.env.BASE_URL || "/";
     const fallbackUrl = `${base}data/${pkg.npmName}.json`;
     const res = await fetch(fallbackUrl);
     if (!res.ok) {
@@ -58,9 +56,7 @@ export function useFactory() {
       // Showcase: keep every real value present. The factory's default
       // nullification is useful for tests but defeats the demo's purpose.
       const f = new DataFactory(dataPackage, {
-        acknowledgeDeceasedFirstNations: lib.requiresAcknowledgment
-          ? isAcknowledged(id)
-          : undefined,
+        acknowledgeDeceasedFirstNations: lib.requiresAcknowledgment ? isAcknowledged(id) : undefined,
         nullabilityOverrides: {
           person: {
             bio: 0,
@@ -114,7 +110,7 @@ export function useFactory() {
 
   function declineAcknowledgment() {
     pendingLibrary.value = null;
-    library.value = 'stem';
+    library.value = "stem";
   }
 
   function setPerson(id: string) {

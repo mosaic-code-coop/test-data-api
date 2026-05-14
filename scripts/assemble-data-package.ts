@@ -9,19 +9,19 @@
 //   - Each per-record file default-exports a typed record
 //   - Record `id` field must match the filename basename (sans `.ts`)
 
-import { readdir, writeFile, mkdir } from 'node:fs/promises';
-import { join, basename } from 'node:path';
-import { pathToFileURL } from 'node:url';
-import type { Person, Group, Event, DataPackage } from '../src/types.js';
+import { readdir, writeFile, mkdir } from "node:fs/promises";
+import { join, basename } from "node:path";
+import { pathToFileURL } from "node:url";
+import type { Person, Group, Event, DataPackage } from "../src/types.js";
 
 const cwd = process.cwd();
 
-let exportName = 'dataPackage';
+let exportName = "dataPackage";
 let containsFirstNationsFlag = false;
 for (const arg of process.argv.slice(2)) {
-  if (arg.startsWith('--export-name=')) {
-    exportName = arg.slice('--export-name='.length);
-  } else if (arg === '--contains-first-nations') {
+  if (arg.startsWith("--export-name=")) {
+    exportName = arg.slice("--export-name=".length);
+  } else if (arg === "--contains-first-nations") {
     containsFirstNationsFlag = true;
   }
 }
@@ -33,7 +33,7 @@ async function loadKind<T extends { id: string }>(dir: string, kind: string): Pr
   } catch {
     return [];
   }
-  const files = entries.filter((f) => f.endsWith('.ts')).sort();
+  const files = entries.filter((f) => f.endsWith(".ts")).sort();
   const items: T[] = [];
   for (const f of files) {
     const url = pathToFileURL(join(dir, f)).href;
@@ -42,11 +42,9 @@ async function loadKind<T extends { id: string }>(dir: string, kind: string): Pr
       throw new Error(`${kind}/${f}: missing default export`);
     }
     const item = mod.default;
-    const expectedId = basename(f, '.ts');
+    const expectedId = basename(f, ".ts");
     if (item.id !== expectedId) {
-      throw new Error(
-        `${kind}/${f}: id "${item.id}" does not match filename "${expectedId}"`,
-      );
+      throw new Error(`${kind}/${f}: id "${item.id}" does not match filename "${expectedId}"`);
     }
     items.push(item);
   }
@@ -88,20 +86,20 @@ function tsStringLiteral(s: string): string {
 }
 
 function tsValue(value: unknown): string {
-  if (value === null) return 'null';
-  if (value === undefined) return 'undefined';
+  if (value === null) return "null";
+  if (value === undefined) return "undefined";
   if (value instanceof Date) return `new Date(${JSON.stringify(value.toISOString())})`;
-  if (typeof value === 'string') return tsStringLiteral(value);
-  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (typeof value === "string") return tsStringLiteral(value);
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
   if (Array.isArray(value)) {
-    if (value.length === 0) return '[]';
-    return `[${value.map((v) => tsValue(v)).join(', ')}]`;
+    if (value.length === 0) return "[]";
+    return `[${value.map((v) => tsValue(v)).join(", ")}]`;
   }
-  if (typeof value === 'object') {
+  if (typeof value === "object") {
     const entries = Object.entries(value as Record<string, unknown>).map(
       ([k, v]) => `${JSON.stringify(k)}: ${tsValue(v)}`,
     );
-    return `{ ${entries.join(', ')} }`;
+    return `{ ${entries.join(", ")} }`;
   }
   throw new Error(`Cannot serialize value of type ${typeof value}`);
 }
@@ -111,29 +109,28 @@ function renderRecord(item: unknown): string {
 }
 
 async function main(): Promise<void> {
-  const people = await loadKind<Person>(join(cwd, 'src/person'), 'person');
-  const groups = await loadKind<Group>(join(cwd, 'src/group'), 'group');
-  const events = await loadKind<Event>(join(cwd, 'src/event'), 'event');
+  const people = await loadKind<Person>(join(cwd, "src/person"), "person");
+  const groups = await loadKind<Group>(join(cwd, "src/group"), "group");
+  const events = await loadKind<Event>(join(cwd, "src/event"), "event");
 
   if (people.length === 0 && groups.length === 0 && events.length === 0) {
-    throw new Error('No records found. Expected src/person/*.ts, src/group/*.ts, src/event/*.ts');
+    throw new Error("No records found. Expected src/person/*.ts, src/group/*.ts, src/event/*.ts");
   }
 
-  assertUnique(people, 'person');
-  assertUnique(groups, 'group');
-  assertUnique(events, 'event');
+  assertUnique(people, "person");
+  assertUnique(groups, "group");
+  assertUnique(events, "event");
   assertReferences(people, groups, events);
 
-  const containsFirstNations =
-    containsFirstNationsFlag || people.some((p) => p.isFirstNations === true);
+  const containsFirstNations = containsFirstNationsFlag || people.some((p) => p.isFirstNations === true);
 
-  const outDir = join(cwd, 'src/_generated');
+  const outDir = join(cwd, "src/_generated");
   await mkdir(outDir, { recursive: true });
-  const outFile = join(outDir, 'data-package.ts');
+  const outFile = join(outDir, "data-package.ts");
 
-  const peopleLines = people.map((p) => `  ${renderRecord(p)},`).join('\n');
-  const groupLines = groups.map((g) => `  ${renderRecord(g)},`).join('\n');
-  const eventLines = events.map((e) => `  ${renderRecord(e)},`).join('\n');
+  const peopleLines = people.map((p) => `  ${renderRecord(p)},`).join("\n");
+  const groupLines = groups.map((g) => `  ${renderRecord(g)},`).join("\n");
+  const eventLines = events.map((e) => `  ${renderRecord(e)},`).join("\n");
 
   const ts = `// AUTO-GENERATED by assemble-data-package. Do not edit.
 // Edit per-record source files under src/person/, src/group/, src/event/ instead.
@@ -168,6 +165,6 @@ export default ${exportName};
 }
 
 main().catch((err) => {
-  console.error('[assemble-data-package] ' + (err as Error).message);
+  console.error("[assemble-data-package] " + (err as Error).message);
   process.exit(1);
 });

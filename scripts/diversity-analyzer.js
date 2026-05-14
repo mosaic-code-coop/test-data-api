@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { DataFactory } from '../dist/DataFactory.js';
-import { writeFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { DataFactory } from "../dist/DataFactory.js";
+import { writeFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,70 +12,70 @@ const __dirname = dirname(__filename);
 // country appears in any dataset.
 const COUNTRY_TO_REGION = {
   // North America
-  'United States': 'North America',
-  Canada: 'North America',
-  Mexico: 'North America',
-  Guatemala: 'North America',
-  Honduras: 'North America',
+  "United States": "North America",
+  Canada: "North America",
+  Mexico: "North America",
+  Guatemala: "North America",
+  Honduras: "North America",
   // South America
-  Brazil: 'South America',
-  Argentina: 'South America',
-  Chile: 'South America',
-  Colombia: 'South America',
-  Peru: 'South America',
-  Bolivia: 'South America',
-  Ecuador: 'South America',
+  Brazil: "South America",
+  Argentina: "South America",
+  Chile: "South America",
+  Colombia: "South America",
+  Peru: "South America",
+  Bolivia: "South America",
+  Ecuador: "South America",
   // Europe
-  'United Kingdom': 'Europe',
-  Germany: 'Europe',
-  France: 'Europe',
-  Italy: 'Europe',
-  Spain: 'Europe',
-  Poland: 'Europe',
-  Russia: 'Europe',
-  Netherlands: 'Europe',
-  Sweden: 'Europe',
-  Norway: 'Europe',
-  Denmark: 'Europe',
-  Finland: 'Europe',
-  Austria: 'Europe',
-  Greece: 'Europe',
+  "United Kingdom": "Europe",
+  Germany: "Europe",
+  France: "Europe",
+  Italy: "Europe",
+  Spain: "Europe",
+  Poland: "Europe",
+  Russia: "Europe",
+  Netherlands: "Europe",
+  Sweden: "Europe",
+  Norway: "Europe",
+  Denmark: "Europe",
+  Finland: "Europe",
+  Austria: "Europe",
+  Greece: "Europe",
   // Asia
-  China: 'Asia',
-  Japan: 'Asia',
-  India: 'Asia',
-  'South Korea': 'Asia',
-  Thailand: 'Asia',
-  Singapore: 'Asia',
-  Indonesia: 'Asia',
-  Philippines: 'Asia',
-  Iran: 'Asia',
-  Pakistan: 'Asia',
-  Taiwan: 'Asia',
-  Nepal: 'Asia',
+  China: "Asia",
+  Japan: "Asia",
+  India: "Asia",
+  "South Korea": "Asia",
+  Thailand: "Asia",
+  Singapore: "Asia",
+  Indonesia: "Asia",
+  Philippines: "Asia",
+  Iran: "Asia",
+  Pakistan: "Asia",
+  Taiwan: "Asia",
+  Nepal: "Asia",
   // Africa
-  Nigeria: 'Africa',
-  'South Africa': 'Africa',
-  Kenya: 'Africa',
-  Egypt: 'Africa',
-  Ghana: 'Africa',
-  Morocco: 'Africa',
-  Senegal: 'Africa',
-  Tanzania: 'Africa',
-  Botswana: 'Africa',
-  Namibia: 'Africa',
-  Chad: 'Africa',
-  Gambia: 'Africa',
+  Nigeria: "Africa",
+  "South Africa": "Africa",
+  Kenya: "Africa",
+  Egypt: "Africa",
+  Ghana: "Africa",
+  Morocco: "Africa",
+  Senegal: "Africa",
+  Tanzania: "Africa",
+  Botswana: "Africa",
+  Namibia: "Africa",
+  Chad: "Africa",
+  Gambia: "Africa",
   // Oceania
-  Australia: 'Oceania',
-  'New Zealand': 'Oceania',
-  Fiji: 'Oceania',
-  'Papua New Guinea': 'Oceania',
-  Vanuatu: 'Oceania',
-  'Solomon Islands': 'Oceania',
-  Kiribati: 'Oceania',
-  'Marshall Islands': 'Oceania',
-  Samoa: 'Oceania',
+  Australia: "Oceania",
+  "New Zealand": "Oceania",
+  Fiji: "Oceania",
+  "Papua New Guinea": "Oceania",
+  Vanuatu: "Oceania",
+  "Solomon Islands": "Oceania",
+  Kiribati: "Oceania",
+  "Marshall Islands": "Oceania",
+  Samoa: "Oceania",
 };
 
 // Maps a nationality tag to a country name (which is then resolved to a
@@ -84,49 +84,49 @@ const COUNTRY_TO_REGION = {
 // detection is auditable and doesn't drift on bio wording.
 const TAG_TO_COUNTRY = {
   // North America
-  american: 'United States',
-  nasa: 'United States',
-  'african-american': 'United States',
-  'asian-american': 'United States',
-  'indian-american': 'United States',
-  'chinese-american': 'United States',
+  american: "United States",
+  nasa: "United States",
+  "african-american": "United States",
+  "asian-american": "United States",
+  "indian-american": "United States",
+  "chinese-american": "United States",
   // Europe
-  british: 'United Kingdom',
-  'german-born': 'United Kingdom',
-  french: 'France',
-  'polish-french': 'France',
-  german: 'Germany',
-  italian: 'Italy',
-  polish: 'Poland',
-  russian: 'Russia',
-  soviet: 'Russia',
-  austrian: 'Austria',
-  'austrian-swedish': 'Austria',
-  greek: 'Greece',
-  danish: 'Denmark',
+  british: "United Kingdom",
+  "german-born": "United Kingdom",
+  french: "France",
+  "polish-french": "France",
+  german: "Germany",
+  italian: "Italy",
+  polish: "Poland",
+  russian: "Russia",
+  soviet: "Russia",
+  austrian: "Austria",
+  "austrian-swedish": "Austria",
+  greek: "Greece",
+  danish: "Denmark",
   // Asia
-  chinese: 'China',
-  indian: 'India',
-  indonesian: 'Indonesia',
-  japanese: 'Japan',
-  korean: 'South Korea',
-  iranian: 'Iran',
-  pakistani: 'Pakistan',
-  taiwanese: 'Taiwan',
+  chinese: "China",
+  indian: "India",
+  indonesian: "Indonesia",
+  japanese: "Japan",
+  korean: "South Korea",
+  iranian: "Iran",
+  pakistani: "Pakistan",
+  taiwanese: "Taiwan",
   // Africa
-  senegalese: 'Senegal',
-  kenyan: 'Kenya',
-  nigerian: 'Nigeria',
-  'south-african': 'South Africa',
-  egyptian: 'Egypt',
-  ghanaian: 'Ghana',
-  moroccan: 'Morocco',
+  senegalese: "Senegal",
+  kenyan: "Kenya",
+  nigerian: "Nigeria",
+  "south-african": "South Africa",
+  egyptian: "Egypt",
+  ghanaian: "Ghana",
+  moroccan: "Morocco",
   // Oceania
-  australian: 'Australia',
+  australian: "Australia",
 };
 
 const mapCountryToRegion = (country) => {
-  const region = COUNTRY_TO_REGION[country] ?? 'Other';
+  const region = COUNTRY_TO_REGION[country] ?? "Other";
   return { region, country };
 };
 
@@ -141,7 +141,7 @@ const getGeographicInfo = (person) => {
     const country = TAG_TO_COUNTRY[tag];
     if (country) return mapCountryToRegion(country);
   }
-  return { region: 'Not Specified', country: 'Not Specified' };
+  return { region: "Not Specified", country: "Not Specified" };
 };
 
 export class DiversityAnalyzer {
@@ -149,7 +149,7 @@ export class DiversityAnalyzer {
     this.dataPackage = dataPackage;
     this.options = {
       includeUnicodeAnalysis: options.includeUnicodeAnalysis || false,
-      datasetName: options.datasetName || 'Dataset',
+      datasetName: options.datasetName || "Dataset",
       acknowledgeDeceasedFirstNations: options.acknowledgeDeceasedFirstNations || false,
       ...options,
     };
@@ -196,7 +196,7 @@ export class DiversityAnalyzer {
       countryStats[geo.country] = (countryStats[geo.country] || 0) + 1;
 
       // Pronouns
-      const pronoun = person.pronouns || 'Not specified';
+      const pronoun = person.pronouns || "Not specified";
       pronouns[pronoun] = (pronouns[pronoun] || 0) + 1;
 
       // Field completeness
@@ -214,8 +214,8 @@ export class DiversityAnalyzer {
 
       // Unicode analysis
       if (this.options.includeUnicodeAnalysis) {
-        const fullName = person.fullName || '';
-        const preferredName = person.preferredName || '';
+        const fullName = person.fullName || "";
+        const preferredName = person.preferredName || "";
         if (this.containsNonAscii(fullName + preferredName)) {
           unicodeStats.containsUnicode++;
         } else {
@@ -241,7 +241,7 @@ export class DiversityAnalyzer {
 
   generateReport(outputPath) {
     const analysis = this.analyze();
-    const now = new Date().toISOString().split('T')[0];
+    const now = new Date().toISOString().split("T")[0];
 
     let markdown = `# ${this.options.datasetName} - Diversity Report
 
@@ -312,16 +312,16 @@ export class DiversityAnalyzer {
 ## Diversity Metrics
 
 ### Geographic Diversity
-- **Regions represented**: ${Object.keys(analysis.regionStats).filter((r) => r !== 'Not Specified').length}
-- **Countries represented**: ${Object.keys(analysis.countryStats).filter((c) => c !== 'Not Specified').length}
-- **North American representation**: ${(((analysis.regionStats['North America'] || 0) / analysis.totalPeople) * 100).toFixed(1)}%
+- **Regions represented**: ${Object.keys(analysis.regionStats).filter((r) => r !== "Not Specified").length}
+- **Countries represented**: ${Object.keys(analysis.countryStats).filter((c) => c !== "Not Specified").length}
+- **North American representation**: ${(((analysis.regionStats["North America"] || 0) / analysis.totalPeople) * 100).toFixed(1)}%
 
 ### Gender Diversity
-- **She/Her pronouns**: ${analysis.pronouns['she/her'] || 0} (${(((analysis.pronouns['she/her'] || 0) / analysis.totalPeople) * 100).toFixed(1)}%)
-- **He/Him pronouns**: ${analysis.pronouns['he/him'] || 0} (${(((analysis.pronouns['he/him'] || 0) / analysis.totalPeople) * 100).toFixed(1)}%)
-- **They/Them pronouns**: ${analysis.pronouns['they/them'] || 0} (${(((analysis.pronouns['they/them'] || 0) / analysis.totalPeople) * 100).toFixed(1)}%)
+- **She/Her pronouns**: ${analysis.pronouns["she/her"] || 0} (${(((analysis.pronouns["she/her"] || 0) / analysis.totalPeople) * 100).toFixed(1)}%)
+- **He/Him pronouns**: ${analysis.pronouns["he/him"] || 0} (${(((analysis.pronouns["he/him"] || 0) / analysis.totalPeople) * 100).toFixed(1)}%)
+- **They/Them pronouns**: ${analysis.pronouns["they/them"] || 0} (${(((analysis.pronouns["they/them"] || 0) / analysis.totalPeople) * 100).toFixed(1)}%)
 - **Other/Unspecified**: ${Object.entries(analysis.pronouns)
-      .filter(([p]) => !['she/her', 'he/him', 'they/them'].includes(p))
+      .filter(([p]) => !["she/her", "he/him", "they/them"].includes(p))
       .reduce((sum, [, count]) => sum + count, 0)}
 `;
 
@@ -336,7 +336,7 @@ export class DiversityAnalyzer {
 *Report generated using @mosaic-code/test-data-factory diversity analyzer*
 `;
 
-    writeFileSync(outputPath, markdown, 'utf8');
+    writeFileSync(outputPath, markdown, "utf8");
     return markdown;
   }
 }
@@ -349,7 +349,7 @@ export const generateDiversityReport = (dataPackage, outputPath, options = {}) =
     console.log(`✅ Diversity report generated: ${outputPath}`);
     return report;
   } catch (error) {
-    console.error('❌ Error generating diversity report:', error);
+    console.error("❌ Error generating diversity report:", error);
     throw error;
   }
 };

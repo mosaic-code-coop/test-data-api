@@ -139,10 +139,10 @@ Edit `scripts/fact-check-bios.js` to change models:
 
 ```javascript
 // HuggingFace model (fast, requires API key)
-const HUGGINGFACE_MODEL = 'meta-llama/Llama-3.1-8B-Instruct';
+const HUGGINGFACE_MODEL = "meta-llama/Llama-3.1-8B-Instruct";
 
 // Local Ollama model (slower, offline)
-const OLLAMA_MODEL = 'bespoke-minicheck:7b';
+const OLLAMA_MODEL = "bespoke-minicheck:7b";
 ```
 
 ### Alternative Local Models

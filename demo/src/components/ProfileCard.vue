@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import type { DataFactory, Person } from '../types';
-import { editRecordUrl, type LibraryConfig } from '../libraries';
+import { computed, ref, watch } from "vue";
+import type { DataFactory, Person } from "../types";
+import { editRecordUrl, type LibraryConfig } from "../libraries";
 
 const props = defineProps<{ person: Person; factory: DataFactory; library: LibraryConfig }>();
 const emit = defineEmits<{
-  (e: 'select-related', payload: { type: 'group' | 'event' | 'tag' | 'country'; id: string }): void;
+  (e: "select-related", payload: { type: "group" | "event" | "tag" | "country"; id: string }): void;
 }>();
 
-const baseUrl = import.meta.env.BASE_URL || '/';
+const baseUrl = import.meta.env.BASE_URL || "/";
 const portrait = computed(() => props.person.picture ?? `${baseUrl}silhouette.svg`);
 
 const subtitle = computed(() => {
@@ -17,13 +17,13 @@ const subtitle = computed(() => {
   if (props.person.preferredName && props.person.preferredName !== props.person.fullName) {
     parts.push(`also "${props.person.preferredName}"`);
   }
-  return parts.join(' · ');
+  return parts.join(" · ");
 });
 
 const groups = computed(() => {
   return (props.person.groupMemberships ?? [])
     .map((id) => props.factory.getGroup(id))
-    .filter((g): g is NonNullable<ReturnType<DataFactory['getGroup']>> => g !== null);
+    .filter((g): g is NonNullable<ReturnType<DataFactory["getGroup"]>> => g !== null);
 });
 
 const events = computed(() => {
@@ -32,27 +32,27 @@ const events = computed(() => {
 
 const nameParts = computed(() => {
   const parts: { label: string; value: string }[] = [];
-  if (props.person.givenName) parts.push({ label: 'Given name', value: props.person.givenName });
-  if (props.person.surname) parts.push({ label: 'Surname', value: props.person.surname });
+  if (props.person.givenName) parts.push({ label: "Given name", value: props.person.givenName });
+  if (props.person.surname) parts.push({ label: "Surname", value: props.person.surname });
   return parts;
 });
 
 const dobLabel = computed(() => {
   const dob = props.person.dateOfBirth;
   if (!dob) return null;
-  const d = typeof dob === 'string' ? new Date(dob) : dob;
+  const d = typeof dob === "string" ? new Date(dob) : dob;
   if (isNaN(d.getTime())) return null;
-  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 });
 
 const addressLines = computed(() => {
   const a = props.person.address;
   if (!a) return null;
-  const cityRegion = [a.city, a.state].filter(Boolean).join(', ');
-  return [a.street, cityRegion, [a.country, a.zipCode].filter(Boolean).join(' ')].filter(Boolean);
+  const cityRegion = [a.city, a.state].filter(Boolean).join(", ");
+  return [a.street, cityRegion, [a.country, a.zipCode].filter(Boolean).join(" ")].filter(Boolean);
 });
 
-const editUrl = computed(() => editRecordUrl(props.library, 'person', props.person.id));
+const editUrl = computed(() => editRecordUrl(props.library, "person", props.person.id));
 
 const silhouette = `${baseUrl}silhouette.svg`;
 
@@ -71,7 +71,7 @@ function onImageLoad() {
 
 function onImageError(event: Event) {
   const img = event.target as HTMLImageElement;
-  if (img.src.endsWith('silhouette.svg')) {
+  if (img.src.endsWith("silhouette.svg")) {
     imageLoaded.value = true;
     return;
   }
@@ -154,14 +154,7 @@ function onImageError(event: Event) {
       </blockquote>
 
       <section
-        v-if="
-          nameParts.length ||
-          dobLabel ||
-          person.email ||
-          person.phone ||
-          addressLines ||
-          person.reference
-        "
+        v-if="nameParts.length || dobLabel || person.email || person.phone || addressLines || person.reference"
         class="test-data"
         aria-label="Profile fields"
       >
@@ -177,7 +170,9 @@ function onImageError(event: Event) {
           </template>
           <template v-if="person.email">
             <dt>Email</dt>
-            <dd><a :href="`mailto:${person.email}`">{{ person.email }}</a></dd>
+            <dd>
+              <a :href="`mailto:${person.email}`">{{ person.email }}</a>
+            </dd>
           </template>
           <template v-if="person.phone">
             <dt>Phone</dt>

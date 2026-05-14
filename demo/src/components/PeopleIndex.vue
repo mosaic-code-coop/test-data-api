@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import type { Person } from '../types';
+import { computed, ref } from "vue";
+import type { Person } from "../types";
 
 const props = defineProps<{
   people: Person[];
   currentId: string | null;
 }>();
 
-const emit = defineEmits<{ (e: 'select-person', id: string): void }>();
+const emit = defineEmits<{ (e: "select-person", id: string): void }>();
 
-const query = ref('');
+const query = ref("");
 
 function matchesQuery(p: Person, q: string): boolean {
   if (!q) return true;

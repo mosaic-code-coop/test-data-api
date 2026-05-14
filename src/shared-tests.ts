@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { Person, DataPackage, ValidationOptions } from './types.js';
-import { DataFactory } from './DataFactory.js';
+import { describe, it, expect } from "vitest";
+import { Person, DataPackage, ValidationOptions } from "./types.js";
+import { DataFactory } from "./DataFactory.js";
 
 // Helper: Get person identifier for error messages
 function getPersonId(person: Person, index: number): string {
@@ -15,13 +15,7 @@ function validateRequiredString(obj: any, field: string, id: string): void {
 }
 
 // Helper: Validate a field matches a regex pattern
-function validatePattern(
-  obj: any,
-  field: string,
-  pattern: RegExp,
-  id: string,
-  message: string,
-): void {
+function validatePattern(obj: any, field: string, pattern: RegExp, id: string, message: string): void {
   expect(obj[field], `${id}: ${message}`).toMatch(pattern);
 }
 
@@ -48,7 +42,7 @@ interface TestOptions extends ValidationOptions {
 
 export function validateDataPackage(dataPackage: DataPackage, options: TestOptions = {}) {
   const defaultOptions: Required<TestOptions> = {
-    datasetName: options.datasetName || 'Dataset',
+    datasetName: options.datasetName || "Dataset",
     minBirthYear: options.minBirthYear || 300,
     maxBirthYear: options.maxBirthYear || 2010,
     requireDateOfBirth: options.requireDateOfBirth ?? true,
@@ -61,21 +55,21 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
   };
 
   describe(`${defaultOptions.datasetName} - Data Structure Validation`, () => {
-    it('should have required package structure', () => {
+    it("should have required package structure", () => {
       expect(dataPackage).toBeDefined();
       expect(Array.isArray(dataPackage.people)).toBe(true);
       expect(Array.isArray(dataPackage.groups)).toBe(true);
       expect(Array.isArray(dataPackage.events)).toBe(true);
     });
 
-    it('should have metadata when required', () => {
+    it("should have metadata when required", () => {
       if (defaultOptions.containsFirstNationsPeople) {
         expect(dataPackage.metadata).toBeDefined();
         expect(dataPackage.metadata?.containsFirstNationsPeople).toBe(true);
       }
     });
 
-    it('should contain people', () => {
+    it("should contain people", () => {
       expect(dataPackage.people.length).toBeGreaterThan(0);
     });
   });
@@ -87,17 +81,17 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
       const personId = getPersonId(person, index);
 
       describe(`Person: ${personId}`, () => {
-        it('has valid id', () => {
+        it("has valid id", () => {
           expect(person.id).toBeDefined();
           expect(person.id).toEqual(expect.any(String));
           expect(person.id.length).toBeGreaterThan(0);
         });
 
-        it('has valid name', () => {
-          validateRequiredString(person, 'fullName', personId);
+        it("has valid name", () => {
+          validateRequiredString(person, "fullName", personId);
         });
 
-        it('has valid bio', () => {
+        it("has valid bio", () => {
           expect(person.bio, `${personId}: missing bio field`).not.toBeNull();
           expect(person.bio, `${personId}: missing bio field`).not.toBeUndefined();
           expect(person.bio, `${personId}: bio must be string`).toEqual(expect.any(String));
@@ -110,12 +104,9 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
         });
 
         if (defaultOptions.requireDateOfBirth) {
-          it('has valid birth date', () => {
+          it("has valid birth date", () => {
             expect(person.dateOfBirth, `${personId}: missing dateOfBirth field`).toBeDefined();
-            expect(
-              person.dateOfBirth,
-              `${personId}: dateOfBirth must be a Date object`,
-            ).toBeInstanceOf(Date);
+            expect(person.dateOfBirth, `${personId}: dateOfBirth must be a Date object`).toBeInstanceOf(Date);
 
             const birthYear = person.dateOfBirth!.getFullYear();
             expect(
@@ -129,96 +120,68 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
           });
         }
 
-        it('has valid pronouns or null', () => {
+        it("has valid pronouns or null", () => {
           // Pronouns are intentionally optional. Some historical figures have
           // no stated modern pronouns; when set, must be a non-empty string.
           if (person.pronouns != null) {
-            expect(person.pronouns, `${personId}: pronouns must be string`).toEqual(
-              expect.any(String),
-            );
+            expect(person.pronouns, `${personId}: pronouns must be string`).toEqual(expect.any(String));
             expect(person.pronouns.length, `${personId}: pronouns too short`).toBeGreaterThan(0);
           }
         });
 
-        it('has valid email', () => {
-          validateRequiredString(person, 'email', personId);
-          validatePattern(
-            person,
-            'email',
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            personId,
-            'invalid email format',
-          );
-          validatePattern(
-            person,
-            'email',
-            /\.test$/,
-            personId,
-            'should use .test domain for mock data safety',
-          );
+        it("has valid email", () => {
+          validateRequiredString(person, "email", personId);
+          validatePattern(person, "email", /^[^\s@]+@[^\s@]+\.[^\s@]+$/, personId, "invalid email format");
+          validatePattern(person, "email", /\.test$/, personId, "should use .test domain for mock data safety");
         });
 
-        it('has valid phone if present', () => {
+        it("has valid phone if present", () => {
           if (person.phone) {
             expect(person.phone, `${personId}: phone must be string`).toEqual(expect.any(String));
             validatePattern(
               person,
-              'phone',
+              "phone",
               /555|test|-55-5/i,
               personId,
-              'should use 555, test, or -55-5 for mock data safety',
+              "should use 555, test, or -55-5 for mock data safety",
             );
           }
         });
 
-        it('has fake street address if present', () => {
+        it("has fake street address if present", () => {
           if (person.address?.street) {
-            expect(
-              person.address.street,
-              `${personId}: should use " Test" for mock data safety`,
-            ).toMatch(/ Test/);
+            expect(person.address.street, `${personId}: should use " Test" for mock data safety`).toMatch(/ Test/);
           }
         });
 
-        it('has valid reference URL if present', () => {
+        it("has valid reference URL if present", () => {
           const personWithRef = person as any;
           if (personWithRef.reference) {
-            expect(
-              personWithRef.reference,
-              `${personId}: reference must be valid HTTPS URL`,
-            ).toMatch(/^https:\/\/.+/);
+            expect(personWithRef.reference, `${personId}: reference must be valid HTTPS URL`).toMatch(/^https:\/\/.+/);
           }
         });
 
-        it('has valid tags', () => {
-          validateArrayField(person, 'tags', personId);
+        it("has valid tags", () => {
+          validateArrayField(person, "tags", personId);
 
           person.tags.forEach((tag, tagIndex) => {
             expect(tag, `${personId}: tag ${tagIndex} must be string`).toEqual(expect.any(String));
-            expect(tag, `${personId}: tag "${tag}" must be alphanumeric with hyphens only`).toMatch(
-              /^[A-Za-z0-9-]+$/,
-            );
+            expect(tag, `${personId}: tag "${tag}" must be alphanumeric with hyphens only`).toMatch(/^[A-Za-z0-9-]+$/);
           });
         });
 
-        it('has valid picture URL or null', () => {
+        it("has valid picture URL or null", () => {
           // Per schema, picture is `string | null`. When set, it must be HTTPS.
           if (person.picture !== null) {
-            validateRequiredString(person, 'picture', personId);
-            validatePattern(
-              person,
-              'picture',
-              /^https:\/\/.+/,
-              personId,
-              'picture must be valid HTTPS URL',
-            );
+            validateRequiredString(person, "picture", personId);
+            validatePattern(person, "picture", /^https:\/\/.+/, personId, "picture must be valid HTTPS URL");
           }
         });
 
-        it('has valid group memberships structure', () => {
+        it("has valid group memberships structure", () => {
           // groupMemberships is optional; if present, must be array
           if (person.groupMemberships) {
-            validateArrayField(person, 'groupMemberships', personId);
+            validateArrayField(person, "groupMemberships", personId);
           } else {
             // Missing groupMemberships is treated as empty array
             expect(person.groupMemberships).toBeUndefined();
@@ -235,27 +198,25 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
       const groupId = `Group ${group.id}`;
 
       describe(`${groupId}`, () => {
-        it('has valid id', () => {
+        it("has valid id", () => {
           expect(group.id).toBeDefined();
           expect(group.id).toEqual(expect.any(String));
           expect(group.id.length).toBeGreaterThan(0);
         });
 
-        it('has valid name', () => {
-          validateRequiredString(group, 'name', groupId);
+        it("has valid name", () => {
+          validateRequiredString(group, "name", groupId);
         });
 
-        it('has valid about', () => {
+        it("has valid about", () => {
           expect(group.about, `${groupId}: missing about`).toBeDefined();
           expect(group.about, `${groupId}: about must be string`).toEqual(expect.any(String));
           expect(group.about.length, `${groupId}: about too short`).toBeGreaterThan(10);
         });
 
-        it('has valid email if present', () => {
+        it("has valid email if present", () => {
           if (group.email) {
-            expect(group.email, `${groupId}: should use .test domain for mock data safety`).toMatch(
-              /\.test$/,
-            );
+            expect(group.email, `${groupId}: should use .test domain for mock data safety`).toMatch(/\.test$/);
           }
         });
       });
@@ -269,45 +230,45 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
       const eventId = `Event ${event.id}`;
 
       describe(`${eventId}`, () => {
-        it('has valid id', () => {
+        it("has valid id", () => {
           expect(event.id).toBeDefined();
           expect(event.id).toEqual(expect.any(String));
           expect(event.id.length).toBeGreaterThan(0);
         });
 
-        it('has valid name', () => {
-          validateRequiredString(event, 'name', eventId);
+        it("has valid name", () => {
+          validateRequiredString(event, "name", eventId);
         });
 
-        it('has valid date', () => {
+        it("has valid date", () => {
           expect(event.date, `${eventId}: missing date`).toBeDefined();
           expect(event.date, `${eventId}: date must be Date object`).toBeInstanceOf(Date);
         });
 
-        it('has valid attendee IDs structure', () => {
-          validateArrayField(event, 'attendeeIds', eventId);
+        it("has valid attendee IDs structure", () => {
+          validateArrayField(event, "attendeeIds", eventId);
         });
       });
     });
   });
 
   describe(`${defaultOptions.datasetName} - Cross-Entity Validations`, () => {
-    describe('ID Uniqueness', () => {
-      it('all person IDs are unique', () => {
-        validateUniqueIds(dataPackage.people, 'Person');
+    describe("ID Uniqueness", () => {
+      it("all person IDs are unique", () => {
+        validateUniqueIds(dataPackage.people, "Person");
       });
 
-      it('all group IDs are unique', () => {
-        validateUniqueIds(dataPackage.groups, 'Group');
+      it("all group IDs are unique", () => {
+        validateUniqueIds(dataPackage.groups, "Group");
       });
 
-      it('all event IDs are unique', () => {
-        validateUniqueIds(dataPackage.events, 'Event');
+      it("all event IDs are unique", () => {
+        validateUniqueIds(dataPackage.events, "Event");
       });
     });
 
-    describe('Relationship Validations', () => {
-      it('group memberships reference valid groups', () => {
+    describe("Relationship Validations", () => {
+      it("group memberships reference valid groups", () => {
         const groupIds = new Set(dataPackage.groups.map((g) => g.id));
 
         dataPackage.people.forEach((person) => {
@@ -322,7 +283,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
         });
       });
 
-      it('event attendees reference valid people', () => {
+      it("event attendees reference valid people", () => {
         const personIds = new Set(dataPackage.people.map((p) => p.id));
 
         dataPackage.events.forEach((event) => {
@@ -339,7 +300,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
 
   // Add DataFactory integration tests
   describe(`${defaultOptions.datasetName} - DataFactory Integration`, () => {
-    it('should work with DataFactory when properly acknowledged', () => {
+    it("should work with DataFactory when properly acknowledged", () => {
       const testFactory = new DataFactory(dataPackage, {
         acknowledgeDeceasedFirstNations: defaultOptions.acknowledgeDeceasedFirstNations,
       });
@@ -354,7 +315,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
       expect(people.length).toBeGreaterThan(0);
     });
 
-    it('should support filtering by count', () => {
+    it("should support filtering by count", () => {
       const testFactory = new DataFactory(dataPackage, {
         acknowledgeDeceasedFirstNations: defaultOptions.acknowledgeDeceasedFirstNations,
       });
@@ -367,7 +328,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
     });
 
     if (defaultOptions.containsFirstNationsPeople) {
-      it('should require acknowledgment for First Nations data', () => {
+      it("should require acknowledgment for First Nations data", () => {
         const factoryWithoutAck = new DataFactory(dataPackage, {
           acknowledgeDeceasedFirstNations: false,
         });
@@ -383,10 +344,7 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
         it(`should pass custom validation ${index + 1}`, () => {
           dataPackage.people.forEach((person, personIndex) => {
             const errors = validation(person, personIndex);
-            expect(
-              errors,
-              `Person ${person.fullName || person.id}: ${errors.join(', ')}`,
-            ).toHaveLength(0);
+            expect(errors, `Person ${person.fullName || person.id}: ${errors.join(", ")}`).toHaveLength(0);
           });
         });
       });

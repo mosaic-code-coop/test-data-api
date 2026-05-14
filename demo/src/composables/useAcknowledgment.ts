@@ -1,5 +1,5 @@
-import { ref } from 'vue';
-import type { LibraryId } from '../libraries';
+import { ref } from "vue";
+import type { LibraryId } from "../libraries";
 
 // In-memory only: cleared on every page refresh so the acknowledgment is re-prompted.
 const ackMap = ref<Record<string, boolean>>({});

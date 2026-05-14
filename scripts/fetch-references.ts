@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fetch from 'node-fetch';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import fetch from "node-fetch";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const DEBUG = args.includes('--debug');
-let datasetPath = './src/index.ts';
-let outputDir = './references';
+const DEBUG = args.includes("--debug");
+let datasetPath = "./src/index.ts";
+let outputDir = "./references";
 
 // Parse non-flag arguments
 for (const arg of args) {
-  if (!arg.startsWith('--')) {
-    if (arg.endsWith('.ts') || arg.endsWith('.js')) {
+  if (!arg.startsWith("--")) {
+    if (arg.endsWith(".ts") || arg.endsWith(".js")) {
       datasetPath = arg;
     } else {
       outputDir = arg;
@@ -39,7 +39,7 @@ function getBaseUrl(url: string): string {
   const urlObj = new URL(url);
   // Remove the filename from the path
   const pathname = urlObj.pathname;
-  const lastSlash = pathname.lastIndexOf('/');
+  const lastSlash = pathname.lastIndexOf("/");
   const basePath = lastSlash > 0 ? pathname.substring(0, lastSlash + 1) : pathname;
   return `${urlObj.protocol}//${urlObj.host}${basePath}`;
 }
@@ -78,7 +78,7 @@ async function fetchHtml(url: string): Promise<string | null> {
     debugLog(`  Fetching: ${url}`);
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; ReferenceFetcher/1.0)',
+        "User-Agent": "Mozilla/5.0 (compatible; ReferenceFetcher/1.0)",
       },
     });
 
@@ -104,7 +104,7 @@ function saveHtml(content: string, filepath: string): void {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  fs.writeFileSync(filepath, content, 'utf-8');
+  fs.writeFileSync(filepath, content, "utf-8");
   debugLog(`  Saved: ${filepath}`);
 }
 
@@ -131,9 +131,7 @@ async function fetchAndSaveReference(url: string, outputFile: string): Promise<b
 /**
  * Process a single person
  */
-async function processPerson(
-  person: Person,
-): Promise<{ reference: boolean; quoteReference: boolean }> {
+async function processPerson(person: Person): Promise<{ reference: boolean; quoteReference: boolean }> {
   const personId = person.id;
   const personName = person.fullName || person.englishName || person.preferredName || personId;
   const referenceUrl = person.reference;
@@ -208,7 +206,7 @@ async function loadDataset(datasetPath: string): Promise<DataPackage> {
   debugLog(`Loading dataset from: ${absolutePath}`);
 
   // Import the dataset - handle both TS and JS files
-  const importPath = absolutePath.endsWith('.ts') ? absolutePath : absolutePath;
+  const importPath = absolutePath.endsWith(".ts") ? absolutePath : absolutePath;
 
   // Dynamic import
   const dataPackage = await import(importPath);
@@ -223,7 +221,7 @@ async function loadDataset(datasetPath: string): Promise<DataPackage> {
  * Main execution function
  */
 async function run(): Promise<void> {
-  debugLog('Starting reference fetcher...');
+  debugLog("Starting reference fetcher...");
   debugLog(`Dataset path: ${datasetPath}`);
   debugLog(`Output directory: ${outputDir}`);
 
@@ -322,7 +320,7 @@ async function run(): Promise<void> {
     }
   }
 
-  console.log('\n=== Summary ===');
+  console.log("\n=== Summary ===");
   console.log(`  Person references downloaded: ${personReferenceCount}`);
   console.log(`  Quote references downloaded: ${quoteReferenceCount}`);
   console.log(`  Persons skipped: ${personSkipCount}`);
@@ -363,6 +361,6 @@ interface DataPackage {
 
 // Run the script
 run().catch((error) => {
-  console.error('Fatal error:', error);
+  console.error("Fatal error:", error);
   process.exit(1);
 });
