@@ -75,6 +75,7 @@ function displayName(p: Person): string {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1 1 auto;
   min-height: 0;
 }
 
