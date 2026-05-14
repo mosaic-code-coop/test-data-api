@@ -14,8 +14,8 @@ npm install @mosaic-code/test-data-factory
 
 ```typescript
 import DataFactory from '@mosaic-code/test-data-factory';
-import stemAchievementsData from 'stem-achievements-data';
-import firstNationsActivistsData from 'first-nations-activists-data';
+import stemAchievementsData from '@mosaic-code/stem-achievements-data';
+import firstNationsActivistsData from '@mosaic-code/first-nations-activists-data';
 
 /**
  * Some Indigenous and First Nations cultures have important customs around the naming and display of

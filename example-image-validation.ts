@@ -1,6 +1,6 @@
 import { describe } from 'vitest';
 import { validateImageUrls } from './src/image-validation-tests.js';
-import { firstNationsActivistsData } from 'first-nations-activists-data';
+import { firstNationsActivistsData } from '@mosaic-code/first-nations-activists-data';
 
 // Example of running image validation tests separately
 // This can be run independently from the main validation suite

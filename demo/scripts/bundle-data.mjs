@@ -5,15 +5,15 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import stemAchievementsData from 'stem-achievements-data';
-import firstNationsActivistsData from 'first-nations-activists-data';
+import stemAchievementsData from '@mosaic-code/stem-achievements-data';
+import firstNationsActivistsData from '@mosaic-code/first-nations-activists-data';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = join(__dirname, '..', 'public', 'data');
 
 const bundles = [
-  { name: 'stem-achievements-data', data: stemAchievementsData },
-  { name: 'first-nations-activists-data', data: firstNationsActivistsData },
+  { name: '@mosaic-code/stem-achievements-data', data: stemAchievementsData },
+  { name: '@mosaic-code/first-nations-activists-data', data: firstNationsActivistsData },
 ];
 
 await mkdir(outDir, { recursive: true });

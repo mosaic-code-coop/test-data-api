@@ -2,7 +2,7 @@ export const LIBRARIES = {
   stem: {
     id: 'stem',
     label: 'Women, Trans & BIPOC in STEM',
-    npmName: 'stem-achievements-data',
+    npmName: '@mosaic-code/stem-achievements-data',
     repoUrl: 'https://github.com/mosaic-code-coop/test-data-stem-women-trans-bipoc',
     defaultBranch: 'main',
     requiresAcknowledgment: false,
@@ -10,7 +10,7 @@ export const LIBRARIES = {
   'first-nations': {
     id: 'first-nations',
     label: 'First Nations Activists',
-    npmName: 'first-nations-activists-data',
+    npmName: '@mosaic-code/first-nations-activists-data',
     repoUrl: 'https://github.com/mosaic-code-coop/test-data-first-nations-activists',
     defaultBranch: 'main',
     requiresAcknowledgment: true,
