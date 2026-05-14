@@ -14,12 +14,18 @@ const query = ref('');
 function matchesQuery(p: Person, q: string): boolean {
   if (!q) return true;
   const needle = q.toLowerCase();
-  return (
-    p.fullName.toLowerCase().includes(needle) ||
-    (p.englishName ?? '').toLowerCase().includes(needle) ||
-    (p.preferredName ?? '').toLowerCase().includes(needle) ||
-    p.id.toLowerCase().includes(needle)
-  );
+  const haystacks: (string | undefined | null)[] = [
+    p.id,
+    p.fullName,
+    p.englishName,
+    p.preferredName,
+    p.givenName,
+    p.surname,
+    p.pronouns,
+    p.address?.country,
+    ...(p.tags ?? []),
+  ];
+  return haystacks.some((value) => value != null && value.toLowerCase().includes(needle));
 }
 
 const filtered = computed(() => {
@@ -41,8 +47,8 @@ function displayName(p: Person): string {
       v-model="query"
       type="search"
       class="filter-input"
-      placeholder="Filter by name"
-      aria-label="Filter profiles by name"
+      placeholder="Filter by name, id, pronouns, country, tag…"
+      aria-label="Filter profiles by name, id, pronouns, country, or tag"
     />
     <p v-if="filtered.length === 0" class="empty">No matches</p>
     <ul v-else class="name-list">
