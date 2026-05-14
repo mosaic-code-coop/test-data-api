@@ -7,7 +7,7 @@ import RelatedExpander from "./components/RelatedExpander.vue";
 import PeopleIndex from "./components/PeopleIndex.vue";
 import { useFactory } from "./composables/useFactory";
 import { useGitHubStars } from "./composables/useGitHubStars";
-import { LIBRARIES, FRAMEWORK_REPO_URL, starsBadgeUrl, stargazersUrl } from "./libraries";
+import { LIBRARIES, FRAMEWORK_REPO_URL, starsBadgeUrl, stargazersUrl, addPersonUrl } from "./libraries";
 
 const {
   library,
@@ -112,6 +112,8 @@ function onSelectPersonFromDrawer(id: string) {
 }
 
 const { stars: frameworkStars } = useGitHubStars(FRAMEWORK_REPO_URL);
+
+const personAddUrl = computed(() => addPersonUrl(currentLibrary.value));
 </script>
 
 <template>
@@ -164,7 +166,12 @@ const { stars: frameworkStars } = useGitHubStars(FRAMEWORK_REPO_URL);
     </div>
 
     <aside class="sidebar">
-      <PeopleIndex :people="people" :current-id="current?.id ?? null" @select-person="onSelectPerson" />
+      <PeopleIndex
+        :people="people"
+        :current-id="current?.id ?? null"
+        :add-url="personAddUrl"
+        @select-person="onSelectPerson"
+      />
     </aside>
 
     <main class="main-pane">

@@ -5,6 +5,7 @@ import type { Person } from "../types";
 const props = defineProps<{
   people: Person[];
   currentId: string | null;
+  addUrl?: string;
 }>();
 
 const emit = defineEmits<{ (e: "select-person", id: string): void }>();
@@ -63,6 +64,9 @@ function displayName(p: Person): string {
         </button>
       </li>
     </ul>
+    <p v-if="addUrl" class="edit-cta">
+      <a :href="addUrl" target="_blank" rel="noopener">Someone missing? Add a profile ↗</a>
+    </p>
   </nav>
 </template>
 

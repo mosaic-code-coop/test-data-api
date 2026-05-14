@@ -39,3 +39,25 @@ export function stargazersUrl(repoUrl: string): string {
 export function editRecordUrl(lib: LibraryConfig, kind: "person" | "group" | "event", id: string): string {
   return `${lib.repoUrl}/edit/${lib.defaultBranch}/src/${kind}/${id}.ts`;
 }
+
+const PERSON_TEMPLATE = `\
+import type { Person } from "@mosaic-code/test-data-factory";
+
+const person: Person = {
+  id: "person-name",
+  fullName: "Person's Full Name",
+  bio: "A short bio describing their contributions and significance.",
+  email: "name@example.test",
+  phone: "+1-555-0100",
+  picture: "https://upload.wikimedia.org/wikipedia/commons/...",
+  tags: ["primary-field", "another-tag"],
+  reference: "https://en.wikipedia.org/wiki/...",
+};
+
+export default person;
+`;
+
+export function addPersonUrl(lib: LibraryConfig): string {
+  const suffix = Math.random().toString(36).slice(2, 7);
+  return `${lib.repoUrl}/new/${lib.defaultBranch}/src/person?filename=new-person-${suffix}.ts&value=${encodeURIComponent(PERSON_TEMPLATE)}`;
+}
