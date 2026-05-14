@@ -7,7 +7,18 @@ import RelatedExpander from "./components/RelatedExpander.vue";
 import PeopleIndex from "./components/PeopleIndex.vue";
 import { useFactory } from "./composables/useFactory";
 import { useGitHubStars } from "./composables/useGitHubStars";
+import { useTheme, type Theme } from "./composables/useTheme";
 import { LIBRARIES, FRAMEWORK_REPO_URL, starsBadgeUrl, stargazersUrl, addPersonUrl } from "./libraries";
+
+const THEME_META: Record<Theme, { icon: string; label: string }> = {
+  spicy: { icon: "🌶️", label: "Spicy" },
+  eclipse: { icon: "🌙", label: "Eclipse" },
+  happy: { icon: "☁️", label: "Happy" },
+  skyline: { icon: "🌇", label: "Skyline" },
+  sunrise: { icon: "🌻", label: "Sunrise" },
+};
+
+const { theme, cycleTheme } = useTheme();
 
 const {
   library,
@@ -50,7 +61,8 @@ const COVER_IMAGE_PEOPLE = [
   { id: "grace-hopper", name: "Grace Hopper" },
 ] as const;
 
-const coverImageUrl = `${import.meta.env.BASE_URL}og-image.png`;
+const base = import.meta.env.BASE_URL;
+const coverImageUrl = `${base}og-image.png`;
 
 const expanded = ref<{ type: "group" | "event" | "tag" | "country"; id: string } | null>(null);
 
@@ -133,6 +145,25 @@ const personAddUrl = computed(() => addPersonUrl(currentLibrary.value));
       </svg>
     </button>
     <div class="gh-corner">
+      <button
+        type="button"
+        class="gh-corner__theme"
+        :aria-label="`Switch theme — currently ${THEME_META[theme].label}`"
+        @click="cycleTheme"
+      >
+        <span class="gh-corner__theme-icon" aria-hidden="true">{{ THEME_META[theme].icon }}</span>
+        <span class="gh-corner__label">{{ THEME_META[theme].label }}</span>
+      </button>
+      <a
+        class="gh-corner__mosaic"
+        href="https://github.com/mosaic-code-coop"
+        target="_blank"
+        rel="noopener"
+        aria-label="Mosaic Code Co-op on GitHub"
+      >
+        <img :src="`${base}favicon-32.png`" alt="" width="18" height="18" class="gh-corner__mosaic-icon" />
+        <span class="gh-corner__label">Mosaic</span>
+      </a>
       <a
         class="gh-corner__cta"
         :href="FRAMEWORK_REPO_URL"
