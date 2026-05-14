@@ -692,3 +692,98 @@ blockquote cite {
     gap: 0.5rem;
   }
 }
+
+.cover-pane {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.cover-pane > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  color: var(--accent);
+  list-style: none;
+  width: max-content;
+}
+
+.cover-pane > summary::-webkit-details-marker {
+  display: none;
+}
+
+.cover-pane > summary::before {
+  content: "▸";
+  display: inline-block;
+  transition: transform 0.15s ease;
+  color: var(--text-dim);
+  font-size: 0.85em;
+}
+
+.cover-pane[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.cover-pane > summary:hover,
+.cover-pane > summary:focus-visible {
+  text-decoration: underline;
+}
+
+.cover-pane-body {
+  margin-top: 0.75rem;
+  padding: 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.cover-pane-body img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  display: block;
+}
+
+.cover-people {
+  margin: 0;
+  padding-left: 1.4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.15rem 0.75rem;
+}
+
+.cover-people li {
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cover-people li::marker {
+  color: var(--text-dim);
+  font-size: 0.85em;
+}
+
+.cover-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.cover-link:hover,
+.cover-link:focus-visible {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .cover-pane-body {
+    grid-template-columns: 1fr;
+  }
+}

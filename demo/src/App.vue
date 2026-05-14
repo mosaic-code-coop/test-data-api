@@ -25,7 +25,40 @@ const {
   setPerson,
 } = useFactory();
 
+// Order matches the 5x4 grid in scripts/generate-og.mjs (left-to-right, top-to-bottom).
+// Update both lists together if the OG image is regenerated. All IDs live in the STEM library.
+const COVER_IMAGE_PEOPLE = [
+  { id: "katherine-johnson", name: "Katherine Johnson" },
+  { id: "ada-lovelace", name: "Ada Lovelace" },
+  { id: "marie-curie", name: "Marie Curie" },
+  { id: "dorothy-vaughan", name: "Dorothy Vaughan" },
+  { id: "mamie-phipps-clark", name: "Mamie Phipps Clark" },
+  { id: "annie-easley", name: "Annie Easley" },
+  { id: "charlotte-angas-scott", name: "Charlotte Angas Scott" },
+  { id: "maria-gaetana-agnesi", name: "Maria Gaetana Agnesi" },
+  { id: "dorothy-hodgkin", name: "Dorothy Hodgkin" },
+  { id: "maria-mitchell", name: "Maria Mitchell" },
+  { id: "lise-meitner", name: "Lise Meitner" },
+  { id: "sophia-brahe", name: "Sophia Brahe" },
+  { id: "elena-cornaro-piscopia", name: "Elena Cornaro Piscopia" },
+  { id: "wangari-maathai-scientist", name: "Wangari Maathai" },
+  { id: "quarraisha-abdool-karim", name: "Quarraisha Abdool Karim" },
+  { id: "christina-koch", name: "Christina Koch" },
+  { id: "jessica-watkins", name: "Jessica Watkins" },
+  { id: "vanessa-wyche", name: "Vanessa Wyche" },
+  { id: "jane-goodall", name: "Jane Goodall" },
+  { id: "grace-hopper", name: "Grace Hopper" },
+] as const;
+
+const coverImageUrl = `${import.meta.env.BASE_URL}og-image.png`;
+
 const expanded = ref<{ type: "group" | "event" | "tag" | "country"; id: string } | null>(null);
+
+function selectFromCover(id: string) {
+  if (library.value !== "stem") library.value = "stem";
+  setPerson(id);
+  expanded.value = null;
+}
 
 function onSelectRelated(payload: { type: "group" | "event" | "tag" | "country"; id: string }) {
   expanded.value = expanded.value?.id === payload.id && expanded.value.type === payload.type ? null : payload;
@@ -137,7 +170,7 @@ const { stars: frameworkStars } = useGitHubStars(FRAMEWORK_REPO_URL);
     <main class="main-pane">
       <header class="app-header">
         <p class="kicker">Test Data Factory</p>
-        <h1>Names worth remembering, in your test data</h1>
+        <h1>Test Data Worth Remembering</h1>
         <p class="lede">
           I've always found test data easier to reason about when it tells real stories. Concrete people are easier to
           follow than "Test User 1" or Alice and Bob.
@@ -146,6 +179,26 @@ const { stars: frameworkStars } = useGitHubStars(FRAMEWORK_REPO_URL);
           Given how often marginalised contributions are written out, including them in our demo data and test suites is
           one small way we can refuse to participate in erasure.
         </p>
+
+        <details class="cover-pane">
+          <summary>Who's in the cover image</summary>
+          <div class="cover-pane-body">
+            <img
+              :src="coverImageUrl"
+              alt="Grayscale 5×4 grid of portraits of 20 women in STEM"
+              loading="lazy"
+              width="600"
+              height="315"
+            />
+            <ol class="cover-people" aria-label="People in the cover image, left to right, top to bottom">
+              <li v-for="p in COVER_IMAGE_PEOPLE" :key="p.id">
+                <button type="button" class="cover-link" @click="selectFromCover(p.id)">
+                  {{ p.name }}
+                </button>
+              </li>
+            </ol>
+          </div>
+        </details>
       </header>
 
       <div class="content-controls">
