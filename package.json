@@ -1,6 +1,9 @@
 {
   "name": "@mosaic-code/test-data-factory",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "A deterministic test data API that accepts data packages and provides fast retrieval methods",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
