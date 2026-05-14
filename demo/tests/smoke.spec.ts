@@ -83,7 +83,7 @@ test('issue link references the framework or library repo', async ({ page }) => 
   await expect(issueLink).toBeVisible();
   const href = await issueLink.getAttribute('href');
   expect(href).toMatch(
-    /github\.com\/mosaic-sunrise\/test-data-stem-women-trans-bipoc\/issues\/new/,
+    /github\.com\/mosaic-code-coop\/test-data-stem-women-trans-bipoc\/issues\/new/,
   );
   expect(href).toContain('Correction');
 });

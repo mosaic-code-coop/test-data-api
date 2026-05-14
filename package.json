@@ -32,12 +32,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mosaic-sunrise/test-data-api.git"
+    "url": "git+https://github.com/mosaic-code-coop/test-data-api.git"
   },
   "bugs": {
-    "url": "https://github.com/mosaic-sunrise/test-data-api/issues"
+    "url": "https://github.com/mosaic-code-coop/test-data-api/issues"
   },
-  "homepage": "https://github.com/mosaic-sunrise/test-data-api#readme",
+  "homepage": "https://github.com/mosaic-code-coop/test-data-api#readme",
   "devDependencies": {
     "@types/node": "^20.0.0",
     "conventional-changelog-cli": "^5.0.0",

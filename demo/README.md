@@ -1,6 +1,6 @@
 # Test Data Factory — Demo
 
-Live promo for [`@mosaic-code/test-data-factory`](https://github.com/mosaic-sunrise/test-data-api). Single-page Vue 3 app deployed to GitHub Pages at `https://mosaic-sunrise.github.io/test-data-api/`.
+Live promo for [`@mosaic-code/test-data-factory`](https://github.com/mosaic-code-coop/test-data-api). Single-page Vue 3 app deployed to GitHub Pages at `https://mosaic-code-coop.github.io/test-data-api/`.
 
 ## What it does
 
@@ -82,4 +82,4 @@ The First Nations library cannot be loaded until the user confirms they understa
 ## Acknowledged limitations
 
 - `esm.sh @latest` caches for ~10 minutes after a new publish. Library updates take that long to reflect in the live demo.
-- `og:image` is an absolute URL hardcoded to `https://mosaic-sunrise.github.io/test-data-api/og-image.png`; if the org/repo is renamed update `index.html` and `useFactory.ts` (issue-link permalink).
+- `og:image` is an absolute URL hardcoded to `https://mosaic-code-coop.github.io/test-data-api/og-image.png`; if the org/repo is renamed update `index.html` and `useFactory.ts` (issue-link permalink).

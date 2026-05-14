@@ -2,7 +2,7 @@
 
 A deterministic test data API that accepts data packages and provides fast retrieval methods. Perfect for creating consistent, repeatable test scenarios.
 
-**Live demo**: https://mosaic-sunrise.github.io/test-data-api/ — try the framework with real biographies from two data libraries. Source lives in [`demo/`](./demo).
+**Live demo**: https://mosaic-code-coop.github.io/test-data-api/ — try the framework with real biographies from two data libraries. Source lives in [`demo/`](./demo).
 
 ## Installation
 

@@ -21,7 +21,7 @@ const ROWS = 4;
 export const TW = Math.floor(W / COLS);
 export const TH = Math.floor(H / ROWS);
 
-const UA = 'test-data-factory-demo-og/1.0 (https://github.com/mosaic-sunrise/test-data-api)';
+const UA = 'test-data-factory-demo-og/1.0 (https://github.com/mosaic-code-coop/test-data-api)';
 
 // portraits: { url, extractRegion?, extend? }
 // extractRegion is a pre-crop hint applied before smartcrop; use for paintings

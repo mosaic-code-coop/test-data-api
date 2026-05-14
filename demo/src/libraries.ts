@@ -3,7 +3,7 @@ export const LIBRARIES = {
     id: 'stem',
     label: 'Women, Trans & BIPOC in STEM',
     npmName: 'stem-achievements-data',
-    repoUrl: 'https://github.com/mosaic-sunrise/test-data-stem-women-trans-bipoc',
+    repoUrl: 'https://github.com/mosaic-code-coop/test-data-stem-women-trans-bipoc',
     defaultBranch: 'main',
     requiresAcknowledgment: false,
   },
@@ -11,7 +11,7 @@ export const LIBRARIES = {
     id: 'first-nations',
     label: 'First Nations Activists',
     npmName: 'first-nations-activists-data',
-    repoUrl: 'https://github.com/mosaic-sunrise/test-data-first-nations-activists',
+    repoUrl: 'https://github.com/mosaic-code-coop/test-data-first-nations-activists',
     defaultBranch: 'main',
     requiresAcknowledgment: true,
   },
@@ -21,7 +21,7 @@ export type LibraryId = keyof typeof LIBRARIES;
 export type LibraryConfig = (typeof LIBRARIES)[LibraryId];
 
 export const DEFAULT_LIBRARY: LibraryId = 'stem';
-export const FRAMEWORK_REPO_URL = 'https://github.com/mosaic-sunrise/test-data-api';
+export const FRAMEWORK_REPO_URL = 'https://github.com/mosaic-code-coop/test-data-api';
 
 export function isLibraryId(value: string | null): value is LibraryId {
   return value !== null && value in LIBRARIES;

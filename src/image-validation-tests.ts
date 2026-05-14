@@ -19,7 +19,7 @@ interface ImageValidationOptions {
 // they return 429. Without this, Node's fetch sends a default that gets
 // rate-limited heavily.
 const USER_AGENT =
-  'mosaic-test-data-image-validator/1.0 (+https://github.com/mosaic-sunrise/test-data-api)';
+  'mosaic-test-data-image-validator/1.0 (+https://github.com/mosaic-code-coop/test-data-api)';
 
 const BACKOFF_MS = [500, 1500, 4000];
 
