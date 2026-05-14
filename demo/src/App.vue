@@ -6,6 +6,7 @@ import ProfileCard from "./components/ProfileCard.vue";
 import RelatedExpander from "./components/RelatedExpander.vue";
 import PeopleIndex from "./components/PeopleIndex.vue";
 import { useFactory } from "./composables/useFactory";
+import { useGitHubStars } from "./composables/useGitHubStars";
 import { LIBRARIES, FRAMEWORK_REPO_URL, starsBadgeUrl, stargazersUrl } from "./libraries";
 
 const {
@@ -76,20 +77,66 @@ function onSelectPersonFromDrawer(id: string) {
   onSelectPerson(id);
   closeBrowse();
 }
+
+const { stars: frameworkStars } = useGitHubStars(FRAMEWORK_REPO_URL);
 </script>
 
 <template>
   <div class="app">
+    <button type="button" class="mobile-menu-btn" aria-label="Open profile list" @click="openBrowse">
+      <svg
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <line x1="4" y1="7" x2="20" y2="7" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="17" x2="20" y2="17" />
+      </svg>
+    </button>
+    <div class="gh-corner">
+      <a
+        class="gh-corner__cta"
+        :href="FRAMEWORK_REPO_URL"
+        target="_blank"
+        rel="noopener"
+        aria-label="View source on GitHub — use this framework in your project"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+          />
+        </svg>
+        <span class="gh-corner__label">Use this</span>
+      </a>
+      <a
+        class="gh-corner__stars"
+        :href="stargazersUrl(FRAMEWORK_REPO_URL)"
+        target="_blank"
+        rel="noopener"
+        :aria-label="frameworkStars !== null ? `${frameworkStars} stars on GitHub` : 'Star on GitHub'"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="gh-corner__star-icon">
+          <path
+            fill="currentColor"
+            d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+          />
+        </svg>
+        <span class="gh-corner__count">{{ frameworkStars ?? "—" }}</span>
+      </a>
+    </div>
+
     <aside class="sidebar">
       <PeopleIndex :people="people" :current-id="current?.id ?? null" @select-person="onSelectPerson" />
     </aside>
 
     <main class="main-pane">
       <header class="app-header">
-        <p class="kicker">
-          <span>Test Data Factory</span>
-          <a :href="FRAMEWORK_REPO_URL" target="_blank" rel="noopener" class="use-link"> Use in your project ↗ </a>
-        </p>
+        <p class="kicker">Test Data Factory</p>
         <h1>Names worth remembering, in your test data</h1>
         <p class="lede">
           I've always found test data easier to reason about when it tells real stories. Concrete people are easier to
@@ -103,7 +150,6 @@ function onSelectPersonFromDrawer(id: string) {
 
       <div class="content-controls">
         <LibrarySelector v-model="library" />
-        <button type="button" class="browse-btn" @click="openBrowse">Browse profiles</button>
       </div>
 
       <div class="controls" v-if="!requiresPrompt && !loadError">

@@ -47,8 +47,8 @@ function displayName(p: Person): string {
       v-model="query"
       type="search"
       class="filter-input"
-      placeholder="Filter by name, id, pronouns, country, tag…"
-      aria-label="Filter profiles by name, id, pronouns, country, or tag"
+      placeholder="Filter by name, pronouns, country, tag…"
+      aria-label="Filter profiles by name, pronouns, country, or tag"
     />
     <p v-if="filtered.length === 0" class="empty">No matches</p>
     <ul v-else class="name-list">
