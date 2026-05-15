@@ -42,3 +42,22 @@ Initial public release.
 - CI workflow runs lint, format check, typecheck, build, and tests.
 
 <!-- Insert future releases below -->
+
+## [0.2.0] - 2026-05-15
+
+### Added
+
+- `forSuite(name)` — returns a new `DataFactory` seeded deterministically from
+  `name` (e.g. `import.meta.url`) so concurrent test suites pick
+  different-but-stable people without colliding on the same subset.
+- `stringToSeed(string)` — exported cyrb53 hash; combine with `setSeed` for
+  custom seeding strategies.
+- `nullabilityOverrides` option in `LoadDataOptions` to override per-field
+  nullability percentages.
+- Accept multiple `DataPackage` arrays in `loadData`; unacknowledged First
+  Nations packages are excluded per-package.
+
+### Fixed
+
+- `validateImageUrls` rewritten with proper image detection.
+- Allow `null` pronouns; relax tag casing; document `[Test]` convention.
