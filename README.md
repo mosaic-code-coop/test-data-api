@@ -54,12 +54,34 @@ const users2 = factory.getPeople(5);
 // users1 and users2 are identical
 ```
 
+### Concurrent test suites
+
+When 100 test files each call `getPeople(5)` from the same factory, they will
+collide on the same 5 people. Scope by suite name so each file picks
+different-but-stable people:
+
+```typescript
+// `forSuite` returns a new factory seeded from the name; the original is untouched.
+const factory = baseFactory.forSuite(import.meta.url);
+const users = factory.getPeople(5);
+```
+
+Different suite names produce different selections; the same suite name always
+produces the same selection. Collisions are not impossible — this is
+probabilistic, not partitioned.
+
+For advanced use, `stringToSeed(string)` is exported separately and can be
+combined with `setSeed` if you want to keep the suite name management outside
+the factory call.
+
 ## API Reference
 
 ### Seed Management
 
 - `setSeed(number)` - Sets random seed for deterministic results
 - `getSeed()` - Returns current seed value
+- `forSuite(name)` - Returns a new factory seeded from `name` (e.g. a test file path)
+- `stringToSeed(string)` - Derive a numeric seed from a string; pair with `setSeed`
 
 ### People
 

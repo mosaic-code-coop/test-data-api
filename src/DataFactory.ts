@@ -1,5 +1,5 @@
 import { Person, Group, Event, DataPackage, NullabilityConfig, LoadDataOptions, DataPackageMetadata } from "./types.js";
-import { SeededRandom } from "./random.js";
+import { SeededRandom, stringToSeed } from "./random.js";
 
 export class DataFactory {
   private originalPeople: Person[] = [];
@@ -10,6 +10,8 @@ export class DataFactory {
   private random: SeededRandom;
   private dataPackageMetadata?: DataPackageMetadata;
   private firstNationsAcknowledged: boolean = false;
+  private sourcePackages: DataPackage[] = [];
+  private loadOptions?: LoadDataOptions;
   private nullabilityConfig: NullabilityConfig = {
     person: {
       bio: 20,
@@ -36,6 +38,8 @@ export class DataFactory {
 
   loadData(dataPackage: DataPackage | DataPackage[], options?: LoadDataOptions): void {
     const packages = Array.isArray(dataPackage) ? dataPackage : [dataPackage];
+    this.sourcePackages = packages;
+    this.loadOptions = options;
     this.firstNationsAcknowledged = options?.acknowledgeDeceasedFirstNations ?? false;
 
     if (options?.nullabilityOverrides) {
@@ -75,6 +79,12 @@ export class DataFactory {
 
   getSeed(): number {
     return this.random.getSeed();
+  }
+
+  forSuite(name: string): DataFactory {
+    const sibling = new DataFactory(this.sourcePackages, this.loadOptions);
+    sibling.setSeed(stringToSeed(name));
+    return sibling;
   }
 
   getPeople(count?: number): Person[] {

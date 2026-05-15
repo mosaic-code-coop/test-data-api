@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { DataFactory } from "./DataFactory.js";
-import type { DataPackage } from "./types.js";
+import type { DataPackage, Person } from "./types.js";
 
 const mockDataPackage: DataPackage = {
   people: [
@@ -288,6 +288,42 @@ describe("DataFactory", () => {
         .map((p) => p.id)
         .sort();
       expect(withAckIds).toEqual(["fn1", "person1", "person2", "person3"]);
+    });
+  });
+
+  describe("Suite-scoped selection", () => {
+    const buildPerson = (i: number): Person => ({
+      id: `p${i}`,
+      fullName: `Person ${i}`,
+      bio: `Bio ${i}`,
+      email: `p${i}@example.test`,
+      phone: null,
+      picture: null,
+      tags: [],
+    });
+    const largePackage: DataPackage = {
+      people: Array.from({ length: 20 }, (_, i) => buildPerson(i)),
+      groups: [],
+      events: [],
+    };
+
+    it("should pick different people per suite name and the same people for the same name", () => {
+      const base = new DataFactory(largePackage);
+      const aFirst = base
+        .forSuite("alpha")
+        .getPeople(5)
+        .map((p) => p.id);
+      const bFirst = base
+        .forSuite("beta")
+        .getPeople(5)
+        .map((p) => p.id);
+      const aSecond = base
+        .forSuite("alpha")
+        .getPeople(5)
+        .map((p) => p.id);
+
+      expect(aFirst).not.toEqual(bFirst);
+      expect(aFirst).toEqual(aSecond);
     });
   });
 });

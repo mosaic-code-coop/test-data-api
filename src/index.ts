@@ -1,4 +1,5 @@
 export { DataFactory } from "./DataFactory.js";
+export { stringToSeed } from "./random.js";
 export { validateDataPackage } from "./shared-tests.js";
 export { validateImageUrls } from "./image-validation-tests.js";
 export type {
