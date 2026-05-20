@@ -110,7 +110,9 @@ For datasets with image URLs, you can run separate image validation tests to ens
 - Response bodies don't contain HTML (prevents redirects to error pages)
 
 ```typescript
-import { validateImageUrls } from "@mosaic-code/test-data-factory";
+// Note the `/testing` subpath — these helpers statically import `vitest`
+// and must not be loaded from non-test code (e.g. `prisma db seed`).
+import { validateImageUrls } from "@mosaic-code/test-data-factory/testing";
 
 // Run image validation separately (slower, uses bandwidth)
 validateImageUrls(yourDataPackage, {
@@ -129,6 +131,10 @@ validateImageUrls(yourDataPackage, { skipImageValidation: true });
 - Consumes bandwidth
 - May timeout on slow connections
 - Should be run selectively in development/testing
+
+The same `/testing` subpath also exports `validateDataPackage` — the structural
+validator that covers ID uniqueness, referential integrity, and mock-data
+safety patterns.
 
 ## Building a Data Package from Per-Record Files
 

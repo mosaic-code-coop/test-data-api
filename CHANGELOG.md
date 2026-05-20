@@ -45,6 +45,23 @@ Initial public release.
 
 ## [0.2.0] - 2026-05-15
 
+### Changed (breaking)
+
+- `validateDataPackage` and `validateImageUrls` are no longer exported from
+  the main entry. Both modules statically `import { describe, it, expect }
+  from 'vitest'`, which crashed any non-vitest consumer of the package
+  (e.g. a `prisma db seed` script) with "Vitest failed to access its
+  internal state". They now live on the `/testing` subpath:
+
+  ```ts
+  // before
+  import { validateDataPackage } from "@mosaic-code/test-data-factory";
+  // after
+  import { validateDataPackage } from "@mosaic-code/test-data-factory/testing";
+  ```
+
+  Migration is a one-line import change per call site.
+
 ### Added
 
 - `forSuite(name)` — returns a new `DataFactory` seeded deterministically from
