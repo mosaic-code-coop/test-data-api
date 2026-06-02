@@ -7,7 +7,7 @@ defineEmits<{ (e: "update:modelValue", value: LibraryId): void }>();
 
 <template>
   <div class="library-selector">
-    <label for="library-select">Dataset</label>
+    <label for="library-select">Library</label>
     <select
       id="library-select"
       :value="modelValue"

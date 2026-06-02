@@ -1,4 +1,5 @@
 import { ref, onMounted } from "vue";
+import { useUrlState } from "./useUrlState";
 
 export const THEMES = ["spicy", "eclipse", "happy", "skyline", "sunrise"] as const;
 export type Theme = (typeof THEMES)[number];
@@ -29,10 +30,11 @@ function apply(theme: Theme): void {
 }
 
 export function useTheme() {
+  const { urlTheme } = useUrlState();
   const theme = ref<Theme>(DEFAULT_THEME);
 
   onMounted(() => {
-    theme.value = readStored();
+    theme.value = urlTheme.value ?? readStored();
     apply(theme.value);
   });
 
@@ -42,6 +44,7 @@ export function useTheme() {
     theme.value = next;
     apply(next);
     writeStored(next);
+    urlTheme.value = next;
   }
 
   return { theme, cycleTheme };
