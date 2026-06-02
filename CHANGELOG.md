@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-06-02
+
+### Added
+
+- `DataPackageMetadata.hasOptionalFirstNations?: boolean` — marks libraries where
+  First Nations people are an optional subset. Consuming apps can prompt users to
+  include or exclude them rather than presenting a hard acknowledgment gate.
+- `assemble-data-package` script gains `--has-optional-first-nations` flag to set
+  this field in the generated metadata output.
+
+## [0.2.1] - 2026-06-01
+
+### Changed
+
+- `DataFactory.loadData` now filters First Nations records at the **person**
+  level when `acknowledgeDeceasedFirstNations` is not set, instead of dropping
+  whole packages. Mixed datasets (e.g. a global dataset that includes some
+  First Nations people) now still return their non-FN records by default and
+  expose the FN records only when the caller opts in. Backward-compatible:
+  packages that declare `metadata.containsFirstNationsPeople: true` without
+  per-person `isFirstNations` flags are still treated as wholly FN.
+- `validateDataPackage` now distinguishes the two modes: pure-FN packages keep
+  the "requires acknowledgment" throw assertion; mixed packages instead assert
+  that FN records are filtered without acknowledgment and included with it.
+
 ## [0.1.0] - 2026-04-20
 
 Initial public release.
