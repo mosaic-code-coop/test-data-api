@@ -289,6 +289,71 @@ describe("DataFactory", () => {
         .sort();
       expect(withAckIds).toEqual(["fn1", "person1", "person2", "person3"]);
     });
+
+    it("filters First Nations people per-person within a mixed package", () => {
+      const mixedPackage: DataPackage = {
+        people: [
+          {
+            id: "non-fn",
+            fullName: "Non FN",
+            bio: "bio",
+            email: "non@example.test",
+            phone: null,
+            picture: null,
+            tags: [],
+          },
+          {
+            id: "fn",
+            fullName: "FN",
+            bio: "bio",
+            email: "fn@example.test",
+            phone: null,
+            picture: null,
+            tags: [],
+            isFirstNations: true,
+          },
+        ],
+        groups: [],
+        events: [],
+        metadata: { containsFirstNationsPeople: true },
+      };
+
+      const unack = new DataFactory(mixedPackage);
+      expect(unack.getPeople().map((p) => p.id)).toEqual(["non-fn"]);
+
+      const ack = new DataFactory(mixedPackage, { acknowledgeDeceasedFirstNations: true });
+      expect(
+        ack
+          .getPeople()
+          .map((p) => p.id)
+          .sort(),
+      ).toEqual(["fn", "non-fn"]);
+    });
+
+    it("treats package-level FN metadata as wholly FN when no per-person flags exist", () => {
+      const packageWideFn: DataPackage = {
+        people: [
+          {
+            id: "p1",
+            fullName: "P1",
+            bio: "bio",
+            email: "p1@example.test",
+            phone: null,
+            picture: null,
+            tags: [],
+          },
+        ],
+        groups: [],
+        events: [],
+        metadata: { containsFirstNationsPeople: true },
+      };
+
+      const unack = new DataFactory(packageWideFn);
+      expect(() => unack.getPeople()).toThrow(/requires acknowledgment/);
+
+      const ack = new DataFactory(packageWideFn, { acknowledgeDeceasedFirstNations: true });
+      expect(ack.getPeople()).toHaveLength(1);
+    });
   });
 
   describe("Suite-scoped selection", () => {

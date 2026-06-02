@@ -328,12 +328,36 @@ export function validateDataPackage(dataPackage: DataPackage, options: TestOptio
     });
 
     if (defaultOptions.containsFirstNationsPeople) {
-      it("should require acknowledgment for First Nations data", () => {
-        const factoryWithoutAck = new DataFactory(dataPackage, {
-          acknowledgeDeceasedFirstNations: false,
+      const firstNationsPeople = dataPackage.people.filter((person) => person.isFirstNations === true);
+      const nonFirstNationsPeople = dataPackage.people.filter((person) => person.isFirstNations !== true);
+      const packageWideFn = dataPackage.metadata?.containsFirstNationsPeople === true && firstNationsPeople.length === 0;
+      const allPeopleAreFn = packageWideFn || nonFirstNationsPeople.length === 0;
+
+      if (allPeopleAreFn) {
+        it("should require acknowledgment for First Nations data", () => {
+          const factoryWithoutAck = new DataFactory(dataPackage, {
+            acknowledgeDeceasedFirstNations: false,
+          });
+          expect(() => factoryWithoutAck.getPeople()).toThrow(/requires acknowledgment/);
         });
-        expect(() => factoryWithoutAck.getPeople()).toThrow(/requires acknowledgment/);
-      });
+      } else {
+        it("should filter out First Nations people without acknowledgment", () => {
+          const factoryWithoutAck = new DataFactory(dataPackage, {
+            acknowledgeDeceasedFirstNations: false,
+          });
+          const people = factoryWithoutAck.getPeople();
+          expect(people.length).toBe(nonFirstNationsPeople.length);
+          expect(people.every((person) => person.isFirstNations !== true)).toBe(true);
+        });
+
+        it("should include First Nations people with acknowledgment", () => {
+          const factoryWithAck = new DataFactory(dataPackage, {
+            acknowledgeDeceasedFirstNations: true,
+          });
+          const people = factoryWithAck.getPeople();
+          expect(people.length).toBe(dataPackage.people.length);
+        });
+      }
     }
   });
 

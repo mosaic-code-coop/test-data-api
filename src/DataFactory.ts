@@ -50,19 +50,23 @@ export class DataFactory {
       };
     }
 
-    // Drop any package that requires acknowledgment without one. Other packages
-    // still load — passing [stem, firstNations] without acknowledgment returns
-    // stem's records, not nothing.
+    // Filter at the person level so mixed packages (e.g. a global dataset
+    // that includes some First Nations people) still load their non-FN
+    // records when the caller hasn't acknowledged. Backward-compat: a
+    // package that only declares containsFirstNationsPeople at the metadata
+    // level (no per-person flags) is still treated as wholly FN.
     const anyContainsFirstNations = packages.some((pkg) => this.packageContainsFirstNations(pkg));
     this.dataPackageMetadata = anyContainsFirstNations ? { containsFirstNationsPeople: true } : undefined;
 
-    const loadable = this.firstNationsAcknowledged
-      ? packages
-      : packages.filter((pkg) => !this.packageContainsFirstNations(pkg));
+    const allPeople = packages.flatMap((pkg) => this.peopleWithFirstNationsResolved(pkg));
+    const allGroups = packages.flatMap((pkg) => pkg.groups);
+    const allEvents = packages.flatMap((pkg) => pkg.events);
 
-    this.originalPeople = loadable.flatMap((pkg) => pkg.people);
-    this.originalGroups = loadable.flatMap((pkg) => pkg.groups);
-    this.events = loadable.flatMap((pkg) => pkg.events);
+    this.originalPeople = this.firstNationsAcknowledged
+      ? allPeople
+      : allPeople.filter((person) => person.isFirstNations !== true);
+    this.originalGroups = allGroups;
+    this.events = allEvents;
     this.reprocessNullableFields();
   }
 
@@ -70,6 +74,15 @@ export class DataFactory {
     return (
       pkg.metadata?.containsFirstNationsPeople === true || pkg.people.some((person) => person.isFirstNations === true)
     );
+  }
+
+  private peopleWithFirstNationsResolved(pkg: DataPackage): Person[] {
+    const packageWideFn = pkg.metadata?.containsFirstNationsPeople === true;
+    const anyExplicit = pkg.people.some((person) => person.isFirstNations === true);
+    if (packageWideFn && !anyExplicit) {
+      return pkg.people.map((person) => ({ ...person, isFirstNations: true }));
+    }
+    return pkg.people;
   }
 
   setSeed(seed: number): void {
