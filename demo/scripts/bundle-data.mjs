@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import stemAchievementsData from "@mosaic-code/stem-achievements-data";
 import firstNationsActivistsData from "@mosaic-code/first-nations-activists-data";
+import lgbtqFiguresData from "@mosaic-code/lgbtq-figures-data";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const outDir = join(__dirname, "..", "public", "data");
@@ -14,6 +15,7 @@ const outDir = join(__dirname, "..", "public", "data");
 const bundles = [
   { name: "@mosaic-code/stem-achievements-data", data: stemAchievementsData },
   { name: "@mosaic-code/first-nations-activists-data", data: firstNationsActivistsData },
+  { name: "@mosaic-code/lgbtq-figures-data", data: lgbtqFiguresData },
 ];
 
 await mkdir(outDir, { recursive: true });
