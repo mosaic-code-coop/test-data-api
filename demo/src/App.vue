@@ -39,30 +39,59 @@ const {
   setPerson,
 } = useFactory();
 
-// Order matches the 5x4 grid in scripts/generate-og.mjs (left-to-right, top-to-bottom).
-// Update both lists together if the OG image is regenerated. All IDs live in the STEM library.
+// Order matches the 6x4 grid in scripts/og-lgbtq.json (left-to-right, top-to-bottom).
+// Update both lists together if the OG image is regenerated. All IDs live in the lgbtq-figures library.
 const COVER_IMAGE_PEOPLE = [
-  { id: "katherine-johnson", name: "Katherine Johnson" },
-  { id: "ada-lovelace", name: "Ada Lovelace" },
-  { id: "marie-curie", name: "Marie Curie" },
-  { id: "dorothy-vaughan", name: "Dorothy Vaughan" },
-  { id: "mamie-phipps-clark", name: "Mamie Phipps Clark" },
-  { id: "annie-easley", name: "Annie Easley" },
-  { id: "charlotte-angas-scott", name: "Charlotte Angas Scott" },
-  { id: "maria-gaetana-agnesi", name: "Maria Gaetana Agnesi" },
-  { id: "dorothy-hodgkin", name: "Dorothy Hodgkin" },
-  { id: "maria-mitchell", name: "Maria Mitchell" },
-  { id: "lise-meitner", name: "Lise Meitner" },
-  { id: "sophia-brahe", name: "Sophia Brahe" },
-  { id: "elena-cornaro-piscopia", name: "Elena Cornaro Piscopia" },
-  { id: "wangari-maathai-scientist", name: "Wangari Maathai" },
-  { id: "quarraisha-abdool-karim", name: "Quarraisha Abdool Karim" },
-  { id: "christina-koch", name: "Christina Koch" },
-  { id: "jessica-watkins", name: "Jessica Watkins" },
-  { id: "vanessa-wyche", name: "Vanessa Wyche" },
-  { id: "jane-goodall", name: "Jane Goodall" },
-  { id: "grace-hopper", name: "Grace Hopper" },
+  { id: "alan-turing", name: "Alan Turing" },
+  { id: "frank-mugisha", name: "Frank Mugisha" },
+  { id: "bayard-rustin", name: "Bayard Rustin" },
+  { id: "sally-ride", name: "Sally Ride" },
+  { id: "james-baldwin", name: "James Baldwin" },
+  { id: "kasha-jacqueline-nabagesera", name: "Kasha Jacqueline Nabagesera" },
+  { id: "lili-elbe", name: "Lili Elbe" },
+  { id: "leo-varadkar", name: "Leo Varadkar" },
+  { id: "albert-cashier", name: "Albert Cashier" },
+  { id: "marsha-p-johnson", name: "Marsha P. Johnson" },
+  { id: "magnus-hirschfeld", name: "Magnus Hirschfeld" },
+  { id: "tammy-baldwin", name: "Tammy Baldwin" },
+  { id: "audre-lorde", name: "Audre Lorde" },
+  { id: "xavier-bettel", name: "Xavier Bettel" },
+  { id: "simon-nkoli", name: "Simon Nkoli" },
+  { id: "beverley-palesa-ditsie", name: "Beverley Palesa Ditsie" },
+  { id: "frank-kameny", name: "Frank Kameny" },
+  { id: "manvendra-singh-gohil", name: "Manvendra Singh Gohil" },
+  { id: "harvey-milk", name: "Harvey Milk" },
+  { id: "johanna-sigurdardottir", name: "Jóhanna Sigurðardóttir" },
+  { id: "emperor-ai-of-han", name: "Emperor Ai of Han" },
+  { id: "pedro-lemebel", name: "Pedro Lemebel" },
+  { id: "chevalier-deon", name: "Chevalier d'Éon" },
+  { id: "vladimir-luxuria", name: "Vladimir Luxuria" },
 ] as const;
+
+// Retained for if we return to the STEM women/BIPOC cover image (og-image-stem-women.png, 5x4 grid).
+// All IDs live in the stem library.
+// const COVER_IMAGE_PEOPLE = [
+//   { id: "katherine-johnson", name: "Katherine Johnson" },
+//   { id: "ada-lovelace", name: "Ada Lovelace" },
+//   { id: "marie-curie", name: "Marie Curie" },
+//   { id: "dorothy-vaughan", name: "Dorothy Vaughan" },
+//   { id: "mamie-phipps-clark", name: "Mamie Phipps Clark" },
+//   { id: "annie-easley", name: "Annie Easley" },
+//   { id: "charlotte-angas-scott", name: "Charlotte Angas Scott" },
+//   { id: "maria-gaetana-agnesi", name: "Maria Gaetana Agnesi" },
+//   { id: "dorothy-hodgkin", name: "Dorothy Hodgkin" },
+//   { id: "maria-mitchell", name: "Maria Mitchell" },
+//   { id: "lise-meitner", name: "Lise Meitner" },
+//   { id: "sophia-brahe", name: "Sophia Brahe" },
+//   { id: "elena-cornaro-piscopia", name: "Elena Cornaro Piscopia" },
+//   { id: "wangari-maathai-scientist", name: "Wangari Maathai" },
+//   { id: "quarraisha-abdool-karim", name: "Quarraisha Abdool Karim" },
+//   { id: "christina-koch", name: "Christina Koch" },
+//   { id: "jessica-watkins", name: "Jessica Watkins" },
+//   { id: "vanessa-wyche", name: "Vanessa Wyche" },
+//   { id: "jane-goodall", name: "Jane Goodall" },
+//   { id: "grace-hopper", name: "Grace Hopper" },
+// ] as const;
 
 const base = import.meta.env.BASE_URL;
 const coverImageUrl = `${base}og-image.png`;
@@ -70,7 +99,7 @@ const coverImageUrl = `${base}og-image.png`;
 const expanded = ref<{ type: "group" | "event" | "tag" | "country"; id: string } | null>(null);
 
 function selectFromCover(id: string) {
-  if (library.value !== "stem") library.value = "stem";
+  if (library.value !== "lgbtq-figures") library.value = "lgbtq-figures";
   setPerson(id);
   expanded.value = null;
 }
@@ -231,7 +260,7 @@ const personAddUrl = computed(() => addPersonUrl(currentLibrary.value));
           <div class="cover-pane-body">
             <img
               :src="coverImageUrl"
-              alt="Grayscale 5×4 grid of portraits of 20 women in STEM"
+              alt="Grayscale 6×4 grid of portraits of 24 LGBTQ+ figures"
               loading="lazy"
               width="600"
               height="315"
