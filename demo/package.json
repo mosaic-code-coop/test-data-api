@@ -8,6 +8,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview --port 4173",
     "generate-og": "node scripts/generate-og.mjs",
+    "generate-og-lgbtq": "node scripts/generate-og-mosaic.mjs scripts/og-lgbtq.json",
     "bundle-data": "node scripts/bundle-data.mjs",
     "test:playwright": "playwright test"
   },

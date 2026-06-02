@@ -222,9 +222,9 @@ const personAddUrl = computed(() => addPersonUrl(currentLibrary.value));
         </p>
 
         <p class="lede">
-          This library contains brief stories of people often overlooked throughout history in a structured form that
-	  can be easily imported into test suites and demo data. We can use these opportunities to learn about the many
-	  and varied contributions of the often marginalised to human progress. 
+          This library contains brief stories of people often overlooked throughout history in a structured format that
+	  can be easily imported into test suites and demo data. In our day to day as software engineers we can learn about the many
+	  and varied contributions all humanity has made to human progress. 
         </p>
         <details class="cover-pane">
           <summary>Who's in the cover image</summary>

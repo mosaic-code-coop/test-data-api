@@ -1,0 +1,78 @@
+{
+  "out": "og-image.png",
+  "cols": 6,
+  "rows": 4,
+  "library": "@mosaic-code/lgbtq-figures-data",
+  "portraits": [
+    {
+      "id": "alan-turing",
+      "extend": { "left": 80, "right": 80, "top": 0, "bottom": 0 },
+      "manualCrop": { "left": 0, "top": 0, "width": 912, "height": 716 }
+    },
+    {
+      "id": "frank-mugisha",
+      "extractRegion": { "left": 60, "top": 0, "width": 277, "height": 380 }
+    },
+    {
+      "id": "bayard-rustin",
+      "extend": { "left": 200, "right": 200, "top": 0, "bottom": 0 },
+      "manualCrop": { "left": 0, "top": 0, "width": 1546, "height": 1215 }
+    },
+    { "id": "sally-ride" },
+    {
+      "id": "james-baldwin",
+      "manualCrop": { "left": 0, "top": 400, "width": 2255, "height": 1770 }
+    },
+    { "id": "kasha-jacqueline-nabagesera" },
+    {
+      "id": "lili-elbe",
+      "extractRegion": { "left": 0, "top": 0, "width": 2200, "height": 2400 },
+      "manualCrop": { "left": 0, "top": 160, "width": 2200, "height": 1728 }
+    },
+    { "id": "leo-varadkar" },
+    {
+      "id": "albert-cashier",
+      "extractRegion": { "left": 100, "top": 0, "width": 800, "height": 550 }
+    },
+    { "id": "marsha-p-johnson" },
+    {
+      "id": "magnus-hirschfeld",
+      "manualCrop": { "left": 0, "top": 0, "width": 1114, "height": 875 }
+    },
+    { "id": "tammy-baldwin" },
+    { "id": "audre-lorde" },
+    { "id": "xavier-bettel" },
+    { "id": "simon-nkoli" },
+    {
+      "id": "beverley-palesa-ditsie",
+      "extractRegion": { "left": 0, "top": 0, "width": 425, "height": 380 },
+      "extend": { "left": 50, "right": 50, "top": 0, "bottom": 0 }
+    },
+    {
+      "id": "frank-kameny",
+      "extractRegion": { "left": 200, "top": 0, "width": 1700, "height": 1400 }
+    },
+    {
+      "id": "manvendra-singh-gohil",
+      "extractRegion": { "left": 130, "top": 20, "width": 470, "height": 350 }
+    },
+    {
+      "id": "harvey-milk",
+      "extend": { "left": 60, "right": 60, "top": 0, "bottom": 0 },
+      "manualCrop": { "left": 0, "top": 0, "width": 444, "height": 349 }
+    },
+    { "id": "johanna-sigurdardottir" },
+    {
+      "id": "emperor-ai-of-han",
+      "extractRegion": { "left": 30, "top": 0, "width": 280, "height": 280 },
+      "extend": { "left": 0, "right": 30, "top": 15, "bottom": 0 },
+      "manualCrop": { "left": 0, "top": 0, "width": 310, "height": 243 }
+    },
+    { "id": "pedro-lemebel" },
+    {
+      "id": "chevalier-deon",
+      "manualCrop": { "left": 0, "top": 0, "width": 800, "height": 628 }
+    },
+    { "id": "vladimir-luxuria" }
+  ]
+}
