@@ -48,6 +48,8 @@ export interface Event {
 
 export interface DataPackageMetadata {
   containsFirstNationsPeople: boolean;
+  /** Library contains First Nations people, but inclusion is optional (user can exclude them). */
+  hasOptionalFirstNations?: boolean;
 }
 
 export interface NullabilityOverrides {

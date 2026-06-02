@@ -18,11 +18,14 @@ const cwd = process.cwd();
 
 let exportName = "dataPackage";
 let containsFirstNationsFlag = false;
+let hasOptionalFirstNationsFlag = false;
 for (const arg of process.argv.slice(2)) {
   if (arg.startsWith("--export-name=")) {
     exportName = arg.slice("--export-name=".length);
   } else if (arg === "--contains-first-nations") {
     containsFirstNationsFlag = true;
+  } else if (arg === "--has-optional-first-nations") {
+    hasOptionalFirstNationsFlag = true;
   }
 }
 
@@ -123,6 +126,7 @@ async function main(): Promise<void> {
   assertReferences(people, groups, events);
 
   const containsFirstNations = containsFirstNationsFlag || people.some((p) => p.isFirstNations === true);
+  const hasOptionalFirstNations = hasOptionalFirstNationsFlag;
 
   const outDir = join(cwd, "src/_generated");
   await mkdir(outDir, { recursive: true });
@@ -152,7 +156,7 @@ export const ${exportName}: DataPackage = {
   people,
   groups,
   events,
-  metadata: { containsFirstNationsPeople: ${containsFirstNations} },
+  metadata: { containsFirstNationsPeople: ${containsFirstNations}${hasOptionalFirstNations ? ", hasOptionalFirstNations: true" : ""} },
 };
 
 export default ${exportName};
