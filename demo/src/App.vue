@@ -2,6 +2,7 @@
 import { ref, computed, useTemplateRef } from "vue";
 import LibrarySelector from "./components/LibrarySelector.vue";
 import AcknowledgmentModal from "./components/AcknowledgmentModal.vue";
+import FirstNationsOptInModal from "./components/FirstNationsOptInModal.vue";
 import ProfileCard from "./components/ProfileCard.vue";
 import RelatedExpander from "./components/RelatedExpander.vue";
 import PeopleIndex from "./components/PeopleIndex.vue";
@@ -30,6 +31,8 @@ const {
   requiresPrompt,
   confirmAcknowledgment,
   declineAcknowledgment,
+  requiresFirstNationsPrompt,
+  confirmFirstNationsOptIn,
   next: nextPerson,
   prev: prevPerson,
   random: randomPerson,
@@ -208,16 +211,21 @@ const personAddUrl = computed(() => addPersonUrl(currentLibrary.value));
     <main class="main-pane">
       <header class="app-header">
         <p class="kicker">Test Data Factory</p>
-        <h1>Test Data Worth Remembering</h1>
+        <h1>Stories Worth Remembering</h1>
         <p class="lede">
-          I've always found test data easier to reason about when it tells real stories. Concrete people are easier to
+          I've always found example data easier to reason about when it tells real stories. Concrete people are easier to
           follow than "Test User 1" or Alice and Bob.
         </p>
         <p class="lede">
-          Given how often marginalised contributions are written out, including them in our demo data and test suites is
+          Knowing how often marginalised contributions are written out, including them in our demo data and test suites is
           one small way we can refuse to participate in erasure.
         </p>
 
+        <p class="lede">
+          This library contains brief stories of people often overlooked throughout history in a structured form that
+	  can be easily imported into test suites and demo data. We can use these opportunities to learn about the many
+	  and varied contributions of the often marginalised to human progress. 
+        </p>
         <details class="cover-pane">
           <summary>Who's in the cover image</summary>
           <div class="cover-pane-body">
@@ -250,6 +258,11 @@ const personAddUrl = computed(() => addPersonUrl(currentLibrary.value));
       </div>
 
       <AcknowledgmentModal v-if="requiresPrompt" @confirm="confirmAcknowledgment" @decline="declineAcknowledgment" />
+      <FirstNationsOptInModal
+        v-else-if="requiresFirstNationsPrompt"
+        @include="confirmFirstNationsOptIn(true)"
+        @exclude="confirmFirstNationsOptIn(false)"
+      />
 
       <div v-else-if="loadError" class="status error" role="alert">Failed to load library: {{ loadError }}</div>
 

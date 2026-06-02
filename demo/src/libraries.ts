@@ -15,6 +15,15 @@ export const LIBRARIES = {
     defaultBranch: "main",
     requiresAcknowledgment: true,
   },
+  "lgbtq-figures": {
+    id: "lgbtq-figures",
+    label: "LGBTQ+ Figures",
+    npmName: "@mosaic-code/lgbtq-figures-data",
+    repoUrl: "https://github.com/mosaic-code-coop/test-data-lgbtq-figures",
+    defaultBranch: "main",
+    requiresAcknowledgment: false,
+    hasOptionalFirstNations: true,
+  },
 } as const;
 
 export type LibraryId = keyof typeof LIBRARIES;
@@ -25,6 +34,10 @@ export const FRAMEWORK_REPO_URL = "https://github.com/mosaic-code-coop/test-data
 
 export function isLibraryId(value: string | null): value is LibraryId {
   return value !== null && value in LIBRARIES;
+}
+
+export function libHasOptionalFirstNations(lib: LibraryConfig): boolean {
+  return "hasOptionalFirstNations" in lib && lib.hasOptionalFirstNations === true;
 }
 
 export function starsBadgeUrl(repoUrl: string): string {

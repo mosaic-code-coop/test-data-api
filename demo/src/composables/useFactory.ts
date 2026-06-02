@@ -1,6 +1,6 @@
 import { ref, shallowRef, computed, watch } from "vue";
 import { DataFactory, type DataPackage, type Person } from "../types";
-import { LIBRARIES, type LibraryConfig, type LibraryId } from "../libraries";
+import { LIBRARIES, libHasOptionalFirstNations, type LibraryConfig, type LibraryId } from "../libraries";
 import { useAcknowledgment } from "./useAcknowledgment";
 import { useUrlState } from "./useUrlState";
 
@@ -26,7 +26,7 @@ async function loadDataPackage(pkg: LibraryConfig): Promise<DataPackage> {
 
 export function useFactory() {
   const { library, personId } = useUrlState();
-  const { isAcknowledged, acknowledge } = useAcknowledgment();
+  const { isAcknowledged, acknowledge, hasDecidedFirstNations, getFirstNationsOptIn, decideFirstNations } = useAcknowledgment();
 
   const people = ref<Person[]>([]);
   const factory = shallowRef<DataFactory | null>(null);
@@ -37,6 +37,11 @@ export function useFactory() {
   const requiresPrompt = computed(() => {
     const lib = LIBRARIES[library.value];
     return lib.requiresAcknowledgment && !isAcknowledged(library.value);
+  });
+
+  const requiresFirstNationsPrompt = computed(() => {
+    const lib = LIBRARIES[library.value];
+    return !!libHasOptionalFirstNations(lib) && !hasDecidedFirstNations();
   });
 
   const current = computed<Person | null>(
@@ -56,7 +61,11 @@ export function useFactory() {
       // Showcase: keep every real value present. The factory's default
       // nullification is useful for tests but defeats the demo's purpose.
       const f = new DataFactory(dataPackage, {
-        acknowledgeDeceasedFirstNations: lib.requiresAcknowledgment ? isAcknowledged(id) : undefined,
+        acknowledgeDeceasedFirstNations: lib.requiresAcknowledgment
+          ? isAcknowledged(id)
+          : libHasOptionalFirstNations(lib)
+            ? getFirstNationsOptIn()
+            : undefined,
         nullabilityOverrides: {
           person: {
             bio: 0,
@@ -89,7 +98,14 @@ export function useFactory() {
   watch(
     library,
     (id) => {
-      if (LIBRARIES[id].requiresAcknowledgment && !isAcknowledged(id)) {
+      const lib = LIBRARIES[id];
+      if (lib.requiresAcknowledgment && !isAcknowledged(id)) {
+        pendingLibrary.value = id;
+        people.value = [];
+        factory.value = null;
+        return;
+      }
+      if (libHasOptionalFirstNations(lib) && !hasDecidedFirstNations()) {
         pendingLibrary.value = id;
         people.value = [];
         factory.value = null;
@@ -111,6 +127,13 @@ export function useFactory() {
   function declineAcknowledgment() {
     pendingLibrary.value = null;
     library.value = "stem";
+  }
+
+  function confirmFirstNationsOptIn(include: boolean) {
+    decideFirstNations(include);
+    const id = pendingLibrary.value ?? library.value;
+    pendingLibrary.value = null;
+    void loadLibrary(id);
   }
 
   function setPerson(id: string) {
@@ -148,6 +171,8 @@ export function useFactory() {
     requiresPrompt,
     confirmAcknowledgment,
     declineAcknowledgment,
+    requiresFirstNationsPrompt,
+    confirmFirstNationsOptIn,
     setPerson,
     next,
     prev,
